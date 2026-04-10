@@ -6,21 +6,6 @@
 **Pour plus de détails, téléchargez les sources et ouvrez le fichier html (avec images, notamment des connecteurs). **
 ---
 
-## 📋 Table des matières
-
-1. [Les composants](#-les-composants)
-2. [Code couleur des fils](#-code-couleur-des-fils)
-3. [Pinout officiel TELEM1](#-pinout-officiel-telem1)
-4. [Tableau des connexions](#-tableau-des-connexions)
-5. [Étapes de câblage](#-étapes-de-câblage)
-6. [Erreurs fréquentes](#-erreurs-fréquentes-à-éviter)
-7. [Sens des connecteurs RCIN & Servos](#-sens-des-connecteurs-rcin--servos)
-8. [Scripts de test Python](#-scripts-de-test-python)
-9. [Paramètres ArduPilot](#-paramètres-ardupilot)
-10. [Flux de données](#-flux-de-données)
-
----
-
 ## 🧩 Les composants
 
 | Composant | Rôle |
@@ -148,6 +133,8 @@ Un seul BEC alimente tous les OUT simultanément (rail commun).
 > **⚠️ Vérifier le sens des connecteurs au multimètre** — sur le Cube Orange Plus, l'ordre est inversé par rapport au schéma standard (voir section suivante).
 
 ### 7. Configure ArduPilot (Mission Planner)
+
+Installer Mission Planner sur votre poste de travail : https://docs.cubepilot.org/user-guides/autopilot/the-cube/setup/mission-planner
 
 ```
 SERIAL1_PROTOCOL = 2    # MAVLink2
@@ -277,7 +264,7 @@ python3 testPiCube.py
 
 ---
 
-### Script 2 — Test Servos (`test_servos.py`)
+### Script 2 — Test Servos (`test_servos.py`) sans télécommande
 
 Envoie des commandes PWM directes sur les sorties MAIN OUT.
 

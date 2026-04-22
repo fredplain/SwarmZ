@@ -1,9 +1,9 @@
 # 🚢 Câblage Raspberry Pi ↔ Cube Orange
 ### Guide de câblage UART — Battleboats 2026 
 
-> Guide visuel étape par étape pour connecter le Raspberry Pi au Cube Orange (contrôleur de vol ArduPilot), le récepteur radio, les servos et le BEC — à destination des débutants.
+> Guide visuel étape par étape pour connecter le Raspberry Pi au Cube Orange (contrôleur de vol ArduPilot), le récepteur radio via un encodeur PPM, les servos et le BEC — à destination des débutants.
 
-**Pour plus de détails, téléchargez les sources et ouvrez le fichier html (avec images, notamment des connecteurs). **
+**Pour plus de détails, téléchargez les sources et ouvrez le fichier html (avec images, notamment des connecteurs).**
 ---
 
 ## 🧩 Les composants
@@ -12,11 +12,14 @@
 |-----------|------|
 | 🍓 **Raspberry Pi 4B** | L'ordinateur principal. Calcule la trajectoire et envoie des ordres au Cube Orange via l'UART. |
 | 🟠 **Cube Orange** | Le contrôleur de vol (autopilote). Reçoit les ordres du Pi et commande les servos avec précision. |
-| 📻 **Récepteur RC (FS-IA6B)** | Reçoit les signaux radio de la télécommande. Branché sur le Cube Orange en mode SBUS. |
+| 📻 **Récepteur RC (Joysway J5C01R)** | Reçoit les signaux radio de l'émetteur Joysway J4C05. Sort uniquement des signaux **PWM individuels** par canal (pas de SBUS ni de PPM natif). |
+| 🔄 **Encodeur PPM** (ATMEGA328p, firmware Paparazzi) | Convertit les signaux **PWM** du J5C01R en un signal **PPM** unique compatible avec l'entrée RCIN du Cube. Alimenté directement par le Cube via le port RCIN (cavalier non soudé par défaut). |
 | ⚙️ **Servos** | Les moteurs de précision qui bougent le gouvernail et la voile. Reçoivent leur signal du Cube Orange. |
 | 🔋 **BEC 5V/3A** | Alimente le rail servo du Cube Orange (les sorties MAIN OUT ne sont pas alimentées par défaut). |
 
 > ⚡ **Tension, attention !** Le Raspberry Pi fonctionne à **3,3V** sur ses broches GPIO. Le Cube Orange est compatible 3,3V sur son port TELEM1. **Ne branche jamais directement un signal 5V sur le GPIO du Pi** — tu grilleras la carte !
+
+> ⚠️ **Pourquoi un encodeur PPM ?** Le récepteur Joysway J5C01R utilise un protocole propriétaire et ne sort que des canaux **PWM séparés** (un fil signal par canal). Or le port **RCIN du Cube Orange** n'accepte que du **PPM** ou du **SBUS**. L'encodeur fait donc le pont entre les deux.
 
 ---
 
@@ -29,7 +32,7 @@
 | 🔵 Bleu | TX (données envoyées) |
 | 🟢 Vert | RX (données reçues) |
 | 🟡 Jaune | Signal servo / PWM |
-| 🟠 Orange | Signal SBUS (récepteur) |
+| 🟠 Orange | Signal PPM (encodeur → Cube RCIN) |
 
 ---
 
@@ -59,15 +62,20 @@ Pin  Nom       I/O   Tension        Couleur fil   Description
 | Raspberry Pi | Pin 8 – GPIO14 (TX) | Cube Orange TELEM1 | Pin 3 – RX | 🔵 Bleu | Le Pi envoie des données au Cube |
 | Raspberry Pi | Pin 10 – GPIO15 (RX) | Cube Orange TELEM1 | Pin 2 – TX | 🟢 Vert | Le Cube envoie des données au Pi |
 | Raspberry Pi | Pin 6 – GND | Cube Orange TELEM1 | Pin 6 – GND | ⚫ Noir | Masse commune obligatoire ! |
-| Récepteur FS-IA6B | SBUS out | Cube Orange RCIN | SBUS in | 🟠 Orange | Signaux télécommande → Cube |
-| Récepteur FS-IA6B | +5V | Cube Orange RCIN | +5V | 🔴 Rouge | Alimentation du récepteur |
-| Récepteur FS-IA6B | GND | Cube Orange RCIN | GND | ⚫ Noir | Masse du récepteur |
+| Récepteur J5C01R | CH1 – signal | Encodeur PPM | IN1 – signal | 🟡 Jaune/Blanc | Stick gouvernail |
+| Récepteur J5C01R | CH2 – signal | Encodeur PPM | IN2 – signal | 🟡 Jaune/Blanc | Stick voile |
+| Récepteur J5C01R | CH6 – signal | Encodeur PPM | IN3 – signal | 🟡 Jaune/Blanc | Interrupteur mode RC/Auto |
+| Encodeur PPM | PPM OUT – signal | Cube Orange RCIN | Signal | 🟠 Orange | Trame PPM (tous canaux) |
+| Encodeur PPM | VCC | Cube Orange RCIN | +5V | 🔴 Rouge | Alimentation de l'encodeur par le Cube |
+| Encodeur PPM | GND | Cube Orange RCIN | GND | ⚫ Noir | Masse de l'encodeur |
 | BEC 5V | +5V | Cube Orange MAIN OUT3 | + (milieu) | 🔴 Rouge | Alimente le rail servo |
 | BEC 5V | GND | Cube Orange MAIN OUT3 | − (bas) | ⚫ Noir | Masse du rail servo |
 | Cube Orange MAIN OUT1 | Signal PWM | Servo Gouvernail | Signal | 🟡 Jaune | Commande de position |
 | Cube Orange MAIN OUT1 | +5V | Servo Gouvernail | +5V | 🔴 Rouge | Alimentation du servo |
 | Cube Orange MAIN OUT1 | GND | Servo Gouvernail | GND | ⚫ Noir | Masse du servo |
 | Cube Orange MAIN OUT2 | Signal PWM | Servo Voile | Signal | 🟡 Jaune | Commande de la voile |
+
+> 💡 **Astuce câblage côté récepteur** : seuls les fils **signal** (blanc/jaune) des canaux CH1, CH2 et CH6 sont à tirer vers l'encodeur. Les fils rouge (+5V) et noir (GND) de ces connecteurs peuvent rester non connectés côté encodeur puisque celui-ci est alimenté par le Cube. Le canal **CH5** du récepteur reste branché sur la **batterie** (c'est lui qui alimente le récepteur).
 
 ---
 
@@ -113,9 +121,34 @@ Connecte les 3 fils sur le connecteur JST-GH du port **TELEM1** du Cube.
 
 > **⚠️ Attention au croisement :** TX du Pi va sur **RX** du Cube, et RX du Pi va sur **TX** du Cube. C'est toujours comme ça entre deux appareils qui parlent !
 
-### 4. Branche le récepteur sur RCIN
+### 4. Branche le récepteur J5C01R sur l'encodeur PPM, puis l'encodeur sur le Cube
 
-Connecte la sortie **SBUS** du récepteur FS-IA6B sur le port **RCIN** du Cube Orange. Le récepteur prend son alimentation (+5V et GND) directement sur ce connecteur.
+Le récepteur **Joysway J5C01R** ne sort que des signaux **PWM individuels**, incompatibles avec le port RCIN du Cube qui attend du **PPM** ou du **SBUS**. Il faut donc insérer un **encodeur PPM** entre les deux.
+
+**Schéma de principe :**
+
+```
+Récepteur J5C01R         Encodeur PPM           Cube Orange
+
+  CH1 (stick gouv.) ────→ IN1 ──┐
+  CH2 (stick voile) ────→ IN2   │
+  CH6 (mode RC/Auto)────→ IN3 ──┤
+                                 ├──→ PPM OUT ──────→ RCIN
+                                 │                     (alimente l'encodeur)
+                                 └────── VCC/GND ←─────
+  CH5 (batterie) ────→ reste branché sur la batterie de bord
+```
+
+**Marche à suivre :**
+
+1. **Côté récepteur** : tire uniquement le **fil signal** (blanc/jaune) de CH1, CH2 et CH6 vers les entrées IN1, IN2, IN3 de l'encodeur. Les fils rouge et noir de ces trois connecteurs ne sont pas utilisés côté encodeur.
+2. **Côté encodeur** : vérifie que le **cavalier d'alimentation est bien NON soudé** (c'est la configuration par défaut) — l'encodeur sera alors alimenté par le Cube via le port RCIN.
+3. **Encodeur → Cube** : branche la sortie **PPM OUT** de l'encodeur sur le port **RCIN** du Cube Orange avec un câble 3 broches (Signal, +5V, GND). C'est ce même câble qui fournit l'alimentation à l'encodeur.
+4. **CH5 du récepteur** reste branché sur la **batterie** — c'est l'alimentation du récepteur, elle n'a rien à voir avec l'encodeur.
+
+> ✅ **Aucune configuration spéciale dans ArduPilot** : le Cube détecte automatiquement le signal PPM sur RCIN. Les canaux non connectés de l'encodeur (IN4 à IN8) envoient une valeur neutre (1500 µs) dans la trame PPM, ce qui ne pose aucun problème.
+
+> ⚠️ **Remarque firmware** : le micrologiciel de l'encodeur est pré-configuré pour lire 8 canaux. Si tu veux un jour inverser le signal PPM ou modifier les valeurs de failsafe, il faut un programmateur AVR ISP pour reprogrammer la puce. Ce n'est pas nécessaire pour notre usage.
 
 ### 5. Branche le BEC sur le rail MAIN OUT
 
@@ -143,6 +176,12 @@ BRD_SAFETY_DEFLT = 0    # Safety switch désactivé
 FS_THR_ENABLE    = 0    # Failsafe radio désactivé
 ```
 
+**Calibration RC** (une fois l'encodeur branché) :
+- Dans Mission Planner : **Initial Setup → Mandatory Hardware → Radio Calibration**
+- Vérifier que les sticks CH1 (gouvernail) et CH2 (voile) bougent bien les barres correspondantes
+- Vérifier que l'interrupteur CH6 bascule clairement entre deux positions (RC / Auto)
+- Cliquer sur **Calibrate Radio** et faire les mouvements demandés
+
 ### 8. Teste avant de refermer le boîtier
 
 ```bash
@@ -165,6 +204,9 @@ Sur ce carrier board, l'ordre des broches MAIN OUT est **inversé** par rapport 
 
 > ✅ **Si les servos ne répondent pas** malgré une config correcte → retourne tous les connecteurs (servo ET BEC) à 180°. Vérifie toujours au multimètre : +5V entre broche milieu et GND.
 
+### 🔌 Cavalier d'alimentation soudé sur l'encodeur PPM ?
+Si le cavalier est soudé, l'encodeur attend d'être alimenté **par le récepteur** — ce qui ne fonctionne pas dans notre montage puisqu'on ne tire que les fils signal côté J5C01R. **Laisser le cavalier NON soudé** pour que l'alimentation vienne du Cube via RCIN.
+
 ### 🚫 TX sur TX, RX sur RX ?
 C'est la faute numéro 1 ! TX = "j'envoie", RX = "je reçois". Le TX d'un appareil doit toujours aller sur le RX de l'autre — ils se **croisent** toujours.
 
@@ -173,6 +215,12 @@ Sans le fil GND entre Pi et Cube, rien ne fonctionnera même si tous les autres 
 
 ### 🔋 Alimenter les servos depuis le Pi ?
 Mauvaise idée. Les servos consomment trop de courant. Utilise un **BEC externe 5V** branché sur le rail MAIN OUT.
+
+### 📻 Pas de signal PPM détecté par le Cube ?
+- Vérifier qu'une LED s'allume sur l'encodeur quand le Cube est alimenté (preuve qu'il reçoit bien ses 5V via RCIN)
+- Vérifier que le récepteur J5C01R est bien appairé avec l'émetteur J4C05 et sous tension (LED fixe)
+- Vérifier au multimètre/oscilloscope que les sorties CH1/CH2/CH6 du récepteur bougent bien quand on actionne les sticks/interrupteur
+- Dans Mission Planner → **Flight Data → Status** → les barres RC IN doivent bouger
 
 ---
 
@@ -355,6 +403,14 @@ SERIAL2_PROTOCOL = 2    # MAVLink2 — TELEM2
 SERIAL3_PROTOCOL = 5    # GPS — port GPS1
 ```
 
+#### Entrée RC (via encodeur PPM)
+```ini
+# Mapping par défaut — à ajuster après calibration radio
+RCMAP_ROLL       = 1    # CH1 encodeur = gouvernail (stick)
+RCMAP_THROTTLE   = 2    # CH2 encodeur = voile (stick)
+# CH3 encodeur = interrupteur mode RC/Auto (CH6 du récepteur)
+```
+
 #### Sorties servo
 ```ini
 SERVO1_FUNCTION  = 33   # Main Sail (OUT1)
@@ -381,7 +437,7 @@ WNDVN_TYPE       = 4    # Type de girouette
 ```ini
 BRD_SAFETY_DEFLT = 0    # Safety switch désactivé au démarrage
 BRD_SAFETYOPTION = 0    # Options safety switch
-FS_THR_ENABLE    = 0    # Failsafe radio désactivé (pas de récepteur RC)
+FS_THR_ENABLE    = 0    # Failsafe radio désactivé
 FS_GCS_ENABLE    = 0    # Failsafe GCS désactivé
 ```
 
@@ -390,11 +446,13 @@ FS_GCS_ENABLE    = 0    # Failsafe GCS désactivé
 ## 🔄 Flux de données
 
 ```
-📱 Télécommande
-      ↓ radio 2,4GHz
-📻 Récepteur FS-IA6B
-      ↓ SBUS → RCIN
-🟠 Cube Orange (ArduPilot ArduRover)
+📱 Émetteur Joysway J4C05
+      ↓ radio 2,4GHz (protocole propriétaire Joysway)
+📻 Récepteur Joysway J5C01R
+      ↓ PWM (CH1, CH2, CH6 — fils signal uniquement)
+🔄 Encodeur PPM (ATMEGA328p)
+      ↓ PPM (trame unique)
+🟠 Cube Orange — RCIN (ArduPilot ArduRover)
       ↕ MAVLink UART (TELEM1, 57600 bauds)
 🍓 Raspberry Pi (navigation autonome)
       ↓

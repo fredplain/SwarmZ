@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Focus — PoC Bascule RC / Pi · Documentation complète</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+
+:root {
+  --bg:      #0d1117;
+  --panel:   #161b22;
+  --border:  #30363d;
+  --accent:  #58a6ff;
+  --green:   #3fb950;
+  --orange:  #f0883e;
+  --red:     #f85149;
+  --yellow:  #d29922;
+  --purple:  #bc8cff;
+  --text:    #e6edf3;
+  --muted:   #8b949e;
+  --mono:    'Share Tech Mono', monospace;
+  --sans:    'Barlow', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* HERO */
+.hero {
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 28px;
+  margin-bottom: 48px;
+}
+.hero-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.hero h1 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+}
+.hero h1 em { color: var(--orange); font-style: normal; }
+.hero-sub { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.chip.ok { border-color: var(--green); color: var(--green); background: #071d0d; }
+
+/* NAV */
+.toc {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 48px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 6px 24px;
+}
+.toc-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  grid-column: 1 / -1;
+}
+.toc a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+  transition: color .15s;
+}
+.toc a:hover { color: var(--text); }
+.toc-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  min-width: 22px;
+}
+
+/* SECTION */
+h2 {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 48px 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+h2::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+h3 { font-size: 15px; font-weight: 600; color: var(--orange); margin: 24px 0 10px; }
+p { margin-bottom: 12px; }
+
+/* DIAGRAM */
+.diagram-wrap {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+/* TABLE */
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+th {
+  background: #1c2128;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+td { padding: 8px 12px; border-bottom: 1px solid #21262d; font-family: var(--mono); font-size: 12px; }
+tr:hover td { background: #1c2128; }
+
+/* CALLOUT */
+.callout {
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-size: 13px;
+  display: flex;
+  gap: 10px;
+  line-height: 1.6;
+}
+.callout.warn   { background: #2d1f00; border-left: 3px solid var(--yellow); }
+.callout.info   { background: #051d35; border-left: 3px solid var(--accent); }
+.callout.ok     { background: #071d0d; border-left: 3px solid var(--green); }
+.callout.danger { background: #2d0f0f; border-left: 3px solid var(--red); }
+.callout-icon   { font-size: 16px; }
+.callout-text strong { display: block; margin-bottom: 3px; }
+
+/* STEPS */
+.steps { display: flex; flex-direction: column; gap: 12px; }
+.step { display: flex; gap: 14px; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; }
+.step-num { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--accent); min-width: 28px; }
+.step-body { flex: 1; }
+.step-body strong { font-weight: 600; display: block; margin-bottom: 6px; }
+
+/* CODE */
+pre {
+  background: #010409;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 16px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.8;
+  margin: 12px 0;
+}
+code { font-family: var(--mono); font-size: 12px; background: #1c2128; padding: 1px 5px; border-radius: 3px; }
+.c  { color: #8b949e; }
+.kw { color: var(--purple); }
+.fn { color: var(--accent); }
+.st { color: var(--green); }
+.nu { color: var(--orange); }
+.cm { color: #8b949e; font-style: italic; }
+
+/* BADGE */
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  font-weight: 600;
+}
+.bg { background: #0e4023; color: var(--green); }
+.bo { background: #3a1f00; color: var(--orange); }
+.ba { background: #051d35; color: var(--accent); }
+.br { background: #3a0f0f; color: var(--red); }
+
+.wire-r { color: #f85149; font-family: var(--mono); }
+.wire-b { color: #8b949e; font-family: var(--mono); }
+.wire-y { color: var(--yellow); font-family: var(--mono); }
+.wire-w { color: #e6edf3; font-family: var(--mono); }
+.wire-g { color: var(--green); font-family: var(--mono); }
+.val-g  { color: var(--green); }
+.val-o  { color: var(--orange); }
+.val-a  { color: var(--accent); }
+.val-y  { color: var(--yellow); }
+.val-r  { color: var(--red); }
+
+footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-family: var(--mono); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">⛵ Projet Focus · Voilier autonome</div>
+  <h1>PoC Bascule <em>RC / Pi</em> via Cube Orange</h1>
+  <p class="hero-sub">Documentation complète — câblage, configuration Mission Planner, et code Pi</p>
+  <div class="chips">
+    <span class="chip">Raspberry Pi 4</span>
+    <span class="chip">Cube Orange · ArduRover 4.6.3</span>
+    <span class="chip">J5C01R + BCUBE PPM</span>
+    <span class="chip">J4C05</span>
+    <span class="chip ok">✓ PoC validé</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="toc">
+  <div class="toc-title">Sommaire</div>
+  <a href="#s1"><span class="toc-num">01</span>Architecture générale</a>
+  <a href="#s2"><span class="toc-num">02</span>Schéma de câblage complet</a>
+  <a href="#s3"><span class="toc-num">03</span>Câblage détaillé par section</a>
+  <a href="#s4"><span class="toc-num">04</span>Configuration Mission Planner</a>
+  <a href="#s5"><span class="toc-num">05</span>Configuration Raspberry Pi</a>
+  <a href="#s6"><span class="toc-num">06</span>Script Python (v8)</a>
+  <a href="#s7"><span class="toc-num">07</span>Procédure de test</a>
+  <a href="#s8"><span class="toc-num">08</span>Dépannage</a>
+</div>
+
+<!-- 01 ARCHITECTURE -->
+<h2 id="s1">01 Architecture générale</h2>
+
+<p>Le <strong>Cube Orange</strong> joue le rôle de multiplexeur : en mode <span class="badge bo">MANUAL</span> il passe-through les signaux RC vers les servos. Le <strong>Raspberry Pi</strong> prend le contrôle en envoyant des messages <code>RC_CHANNELS_OVERRIDE</code> sur le canal CH1 via MAVLink.</p>
+
+<p>Le <strong>CH3</strong> du levier de la J4C05 est lu en temps réel par le Pi via MAVLink. Quand CH3 &lt; 1400µs (levier bas), le Pi active ses overrides. Quand CH3 ≥ 1400µs (levier haut), le Pi libère tout et le RC reprend le contrôle physique.</p>
+
+<div class="callout info">
+  <span class="callout-icon">ℹ</span>
+  <div class="callout-text"><strong>Pourquoi rester en MANUAL ?</strong>
+  Le mode GUIDED d'ArduRover est conçu pour la navigation autonome vers des waypoints. Sans target actif, il bascule automatiquement en HOLD après ~1.5s. Le mode MANUAL avec RC_CHANNELS_OVERRIDE est plus adapté pour du contrôle direct de servo.</div>
+</div>
+
+<!-- 02 SCHÉMA -->
+<h2 id="s2">02 Schéma de câblage complet</h2>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 1060 660" xmlns="http://www.w3.org/2000/svg" width="100%" style="display:block;margin:auto;">
+  <defs>
+    <marker id="a"  markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#58a6ff"/></marker>
+    <marker id="ag" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#3fb950"/></marker>
+    <marker id="ao" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f0883e"/></marker>
+    <marker id="ay" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#d29922"/></marker>
+    <marker id="ar" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f85149"/></marker>
+    <marker id="aw" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#e6edf3"/></marker>
+  </defs>
+  <rect width="1060" height="660" fill="#0d1117"/>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- J4C05 TRANSMETTEUR -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="14" y="30" width="120" height="76" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+  <text x="74" y="52" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">TRANSMETTEUR</text>
+  <text x="74" y="69" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="bold" font-family="Barlow">J4C05</text>
+  <text x="74" y="85" text-anchor="middle" fill="#d29922" font-size="9" font-family="Share Tech Mono">CH3 levier mode</text>
+  <text x="74" y="98" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">bas=Pi / haut=RC</text>
+  <!-- wireless -->
+  <line x1="136" y1="68" x2="178" y2="68" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a)"/>
+  <text x="157" y="61" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">2.4GHz</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- J5C01R RÉCEPTEUR avec ports numérotés -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="180" y="20" width="130" height="170" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+  <text x="245" y="40" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">RÉCEPTEUR</text>
+  <text x="245" y="56" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="bold" font-family="Barlow">J5C01R</text>
+
+  <!-- Port 1 : 3 fils (alim + signal CH1) -->
+  <rect x="190" y="68" width="40" height="14" rx="2" fill="#0d1117" stroke="#e6edf3" stroke-width="1"/>
+  <text x="210" y="79" text-anchor="middle" fill="#e6edf3" font-size="8" font-family="Share Tech Mono">1</text>
+  <text x="238" y="79" fill="#8b949e" font-size="8" font-family="Share Tech Mono">GND+5V+CH1</text>
+  <text x="238" y="90" fill="#8b949e" font-size="7" font-family="Share Tech Mono">signal en haut</text>
+
+  <!-- Port 2 : signal CH2 orange -->
+  <rect x="190" y="100" width="40" height="14" rx="2" fill="#0d1117" stroke="#f0883e" stroke-width="1"/>
+  <text x="210" y="111" text-anchor="middle" fill="#f0883e" font-size="8" font-family="Share Tech Mono">2</text>
+  <text x="238" y="111" fill="#f0883e" font-size="8" font-family="Share Tech Mono">CH2 — orange</text>
+
+  <!-- Port 3 : signal CH3 jaune -->
+  <rect x="190" y="120" width="40" height="14" rx="2" fill="#0d1117" stroke="#d29922" stroke-width="1"/>
+  <text x="210" y="131" text-anchor="middle" fill="#d29922" font-size="8" font-family="Share Tech Mono">3</text>
+  <text x="238" y="131" fill="#d29922" font-size="8" font-family="Share Tech Mono">CH3 — jaune</text>
+
+  <!-- Port 4 : signal CH4 vert -->
+  <rect x="190" y="140" width="40" height="14" rx="2" fill="#0d1117" stroke="#3fb950" stroke-width="1"/>
+  <text x="210" y="151" text-anchor="middle" fill="#3fb950" font-size="8" font-family="Share Tech Mono">4</text>
+  <text x="238" y="151" fill="#3fb950" font-size="8" font-family="Share Tech Mono">CH4 — vert</text>
+
+  <!-- Port 5 : signal CH5 bleu -->
+  <rect x="190" y="160" width="40" height="14" rx="2" fill="#0d1117" stroke="#58a6ff" stroke-width="1"/>
+  <text x="210" y="171" text-anchor="middle" fill="#58a6ff" font-size="8" font-family="Share Tech Mono">5</text>
+  <text x="238" y="171" fill="#58a6ff" font-size="8" font-family="Share Tech Mono">CH5 — bleu</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- BCUBE PPM ENCODEUR -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="380" y="20" width="150" height="200" rx="6" fill="#161b22" stroke="#f0883e" stroke-width="1.5"/>
+  <text x="455" y="42" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">ENCODEUR PPM</text>
+  <text x="455" y="58" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="bold" font-family="Barlow">BCUBE</text>
+
+  <!-- Côté récepteur (gauche du BCUBE) : peigne signaux -->
+  <text x="388" y="78" fill="#8b949e" font-size="7" font-family="Share Tech Mono">← côté récepteur</text>
+
+  <!-- 3 fils (alim) : IN1 prise 3 fils -->
+  <rect x="388" y="82" width="36" height="14" rx="2" fill="#0d1117" stroke="#e6edf3" stroke-width="1"/>
+  <text x="406" y="93" text-anchor="middle" fill="#e6edf3" font-size="7" font-family="Share Tech Mono">IN1 3f</text>
+
+  <!-- signal CH2 orange IN2 -->
+  <rect x="388" y="102" width="36" height="14" rx="2" fill="#0d1117" stroke="#f0883e" stroke-width="1"/>
+  <text x="406" y="113" text-anchor="middle" fill="#f0883e" font-size="7" font-family="Share Tech Mono">IN2</text>
+
+  <!-- signal CH3 jaune IN3 -->
+  <rect x="388" y="122" width="36" height="14" rx="2" fill="#0d1117" stroke="#d29922" stroke-width="1"/>
+  <text x="406" y="133" text-anchor="middle" fill="#d29922" font-size="7" font-family="Share Tech Mono">IN3</text>
+
+  <!-- signal CH4 vert IN4 -->
+  <rect x="388" y="142" width="36" height="14" rx="2" fill="#0d1117" stroke="#3fb950" stroke-width="1"/>
+  <text x="406" y="153" text-anchor="middle" fill="#3fb950" font-size="7" font-family="Share Tech Mono">IN4</text>
+
+  <!-- signal CH5 bleu IN5 -->
+  <rect x="388" y="162" width="36" height="14" rx="2" fill="#0d1117" stroke="#58a6ff" stroke-width="1"/>
+  <text x="406" y="173" text-anchor="middle" fill="#58a6ff" font-size="7" font-family="Share Tech Mono">IN5</text>
+
+  <!-- Prise alim power in (BEC) -->
+  <rect x="388" y="188" width="60" height="18" rx="2" fill="#0d1117" stroke="#f85149" stroke-width="1.5"/>
+  <text x="418" y="201" text-anchor="middle" fill="#f85149" font-size="8" font-family="Share Tech Mono">PWR IN (BEC)</text>
+
+  <!-- Côté sortie PPM (droite BCUBE) -->
+  <text x="452" y="78" fill="#8b949e" font-size="7" font-family="Share Tech Mono">sortie Cube →</text>
+  <rect x="492" y="82" width="30" height="50" rx="2" fill="#0d1117" stroke="#d29922" stroke-width="1.5"/>
+  <text x="507" y="98" text-anchor="middle" fill="#8b949e" font-size="7" font-family="Share Tech Mono">GND</text>
+  <text x="507" y="111" text-anchor="middle" fill="#d29922" font-size="7" font-family="Share Tech Mono">PPM</text>
+  <text x="507" y="124" text-anchor="middle" fill="#8b949e" font-size="7" font-family="Share Tech Mono">+5V</text>
+  <text x="507" y="136" text-anchor="middle" fill="#8b949e" font-size="7" font-family="Share Tech Mono">MUX</text>
+  <text x="455" y="150" text-anchor="middle" fill="#8b949e" font-size="7" font-family="Share Tech Mono">3 fils → RC IN</text>
+
+  <!-- ══ Câbles J5C01R → BCUBE ══ -->
+  <!-- 3 fils port1 → IN1 -->
+  <line x1="230" y1="75" x2="388" y2="89" stroke="#e6edf3" stroke-width="2" marker-end="url(#aw)"/>
+  <text x="310" y="76" fill="#e6edf3" font-size="8" font-family="Share Tech Mono">3 fils blanc/rouge/noir</text>
+
+  <!-- CH2 orange port2 → IN2 -->
+  <line x1="230" y1="107" x2="388" y2="109" stroke="#f0883e" stroke-width="1.5" marker-end="url(#ao)"/>
+  <!-- CH3 jaune port3 → IN3 -->
+  <line x1="230" y1="127" x2="388" y2="129" stroke="#d29922" stroke-width="1.5" marker-end="url(#ay)"/>
+  <!-- CH4 vert port4 → IN4 -->
+  <line x1="230" y1="147" x2="388" y2="149" stroke="#3fb950" stroke-width="1.5" marker-end="url(#ag)"/>
+  <!-- CH5 bleu port5 → IN5 -->
+  <line x1="230" y1="167" x2="388" y2="167" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- BEC 5V -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="380" y="340" width="150" height="70" rx="6" fill="#1a1208" stroke="#d29922" stroke-width="2"/>
+  <text x="455" y="364" text-anchor="middle" fill="#d29922" font-size="9" font-family="Share Tech Mono">ALIMENTATION</text>
+  <text x="455" y="382" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="bold" font-family="Barlow">BEC 5V</text>
+  <text x="455" y="400" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">depuis LiPo batterie RC</text>
+
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- CUBE ORANGE -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="620" y="20" width="200" height="430" rx="8" fill="#1a1030" stroke="#bc8cff" stroke-width="2"/>
+  <text x="720" y="46" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">AUTOPILOTE</text>
+  <text x="720" y="64" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="bold" font-family="Barlow">Cube Orange</text>
+  <text x="720" y="80" text-anchor="middle" fill="#bc8cff" font-size="9" font-family="Share Tech Mono">ArduRover 4.6.3</text>
+
+  <!-- RC IN -->
+  <rect x="636" y="92" width="100" height="26" rx="3" fill="#0d1117" stroke="#d29922" stroke-width="1.5"/>
+  <text x="686" y="109" text-anchor="middle" fill="#d29922" font-size="10" font-family="Share Tech Mono">RC IN (PPM)</text>
+
+  <!-- TELEM2 -->
+  <rect x="636" y="134" width="100" height="26" rx="3" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="686" y="151" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="Share Tech Mono">TELEM2 UART</text>
+
+  <!-- MAIN OUT ports -->
+  <text x="686" y="194" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">MAIN OUT — noir en haut</text>
+
+  <!-- OUT1 safran -->
+  <rect x="636" y="200" width="100" height="26" rx="3" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="686" y="217" text-anchor="middle" fill="#3fb950" font-size="9" font-family="Share Tech Mono">OUT 1 — Safran</text>
+
+  <!-- OUT2 voile -->
+  <rect x="636" y="232" width="100" height="26" rx="3" fill="#0d1117" stroke="#3fb950" stroke-width="1"/>
+  <text x="686" y="249" text-anchor="middle" fill="#3fb950" font-size="9" font-family="Share Tech Mono">OUT 2 — Voile</text>
+
+  <!-- OUT3 -->
+  <rect x="636" y="264" width="100" height="20" rx="3" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+  <text x="686" y="278" text-anchor="middle" fill="#30363d" font-size="8" font-family="Share Tech Mono">OUT 3</text>
+  <!-- OUT4 -->
+  <rect x="636" y="290" width="100" height="20" rx="3" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+  <text x="686" y="304" text-anchor="middle" fill="#30363d" font-size="8" font-family="Share Tech Mono">OUT 4</text>
+
+  <!-- OUT5 BEC alim rail -->
+  <rect x="636" y="316" width="100" height="26" rx="3" fill="#1a1208" stroke="#d29922" stroke-width="1.5"/>
+  <text x="686" y="329" text-anchor="middle" fill="#d29922" font-size="9" font-family="Share Tech Mono">OUT 5 — BEC</text>
+  <text x="686" y="340" text-anchor="middle" fill="#8b949e" font-size="7" font-family="Share Tech Mono">alim rail servos</text>
+
+  <!-- logique interne -->
+  <rect x="634" y="360" width="168" height="76" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+  <text x="718" y="377" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">Mode MANUAL permanent</text>
+  <text x="718" y="393" text-anchor="middle" fill="#f85149" font-size="8" font-family="Share Tech Mono">CH3 ≥ 1400 → RC direct</text>
+  <text x="718" y="409" text-anchor="middle" fill="#3fb950" font-size="8" font-family="Share Tech Mono">CH3 &lt; 1400 → Pi override</text>
+  <text x="718" y="425" text-anchor="middle" fill="#bc8cff" font-size="7" font-family="Share Tech Mono">SERVO1_FUNCTION = 1 (PassThru)</text>
+
+  <!-- BCUBE PPM OUT → Cube RC IN (3 fils) -->
+  <line x1="522" y1="100" x2="634" y2="105" stroke="#d29922" stroke-width="2" marker-end="url(#ay)"/>
+  <text x="578" y="94" text-anchor="middle" fill="#d29922" font-size="8" font-family="Share Tech Mono">3 fils : GND + PPM</text>
+  <text x="578" y="106" text-anchor="middle" fill="#8b949e" font-size="7" font-family="Share Tech Mono">(+5V non branché)</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- TELEM2 → Raspberry Pi -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="380" y="460" width="200" height="100" rx="8" fill="#071d2a" stroke="#58a6ff" stroke-width="2"/>
+  <text x="480" y="484" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">ORDINATEUR EMBARQUÉ</text>
+  <text x="480" y="503" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="bold" font-family="Barlow">Raspberry Pi 4</text>
+  <text x="480" y="520" text-anchor="middle" fill="#58a6ff" font-size="9" font-family="Share Tech Mono">/dev/serial0 · GPIO14/15</text>
+  <text x="480" y="536" text-anchor="middle" fill="#3fb950" font-size="9" font-family="Share Tech Mono">pymavlink · RC_CHANNELS_OVERRIDE</text>
+  <text x="480" y="550" text-anchor="middle" fill="#d29922" font-size="8" font-family="Share Tech Mono">lit CH3, override CH1 à 10Hz</text>
+
+  <!-- TELEM2 ↔ Pi -->
+  <line x1="636" y1="147" x2="582" y2="480" stroke="#58a6ff" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="585" y1="500" x2="636" y2="165" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#a)"/>
+  <text x="616" y="312" fill="#58a6ff" font-size="8" font-family="Share Tech Mono">MAVLink</text>
+  <text x="626" y="324" fill="#58a6ff" font-size="8" font-family="Share Tech Mono">57600bd</text>
+
+  <!-- BEC → OUT5 du Cube -->
+  <line x1="530" y1="375" x2="620" y2="329" stroke="#d29922" stroke-width="2" stroke-dasharray="5,2" marker-end="url(#ay)"/>
+  <text x="552" y="368" fill="#d29922" font-size="8" font-family="Share Tech Mono">BEC → MAIN OUT 5</text>
+  <text x="552" y="380" fill="#8b949e" font-size="7" font-family="Share Tech Mono">(alim rail servos)</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- SERVOS -->
+  <!-- ══════════════════════════════════════════════ -->
+
+  <!-- Servo safran OUT1 -->
+  <rect x="870" y="185" width="160" height="62" rx="5" fill="#071d0d" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="950" y="206" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">SERVO SAFRAN</text>
+  <text x="950" y="224" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold" font-family="Barlow">Gouvernail</text>
+  <text x="950" y="240" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">noir en haut · PWM 50Hz</text>
+  <line x1="738" y1="213" x2="868" y2="213" stroke="#3fb950" stroke-width="2" marker-end="url(#ag)"/>
+  <text x="803" y="206" text-anchor="middle" fill="#3fb950" font-size="8" font-family="Share Tech Mono">OUT 1</text>
+
+  <!-- Servo voile OUT2 -->
+  <rect x="870" y="265" width="160" height="62" rx="5" fill="#071d0d" stroke="#3fb950" stroke-width="1"/>
+  <text x="950" y="286" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">SERVO VOILE</text>
+  <text x="950" y="304" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold" font-family="Barlow">Winch voile</text>
+  <text x="950" y="320" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">noir en haut · PWM 50Hz</text>
+  <line x1="738" y1="245" x2="868" y2="293" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="5,2" marker-end="url(#ag)"/>
+  <text x="803" y="262" text-anchor="middle" fill="#3fb950" font-size="8" font-family="Share Tech Mono">OUT 2</text>
+
+  <!-- Warning inversé -->
+  <rect x="870" y="345" width="160" height="36" rx="4" fill="#2d1f00" stroke="#d29922" stroke-width="1"/>
+  <text x="950" y="359" text-anchor="middle" fill="#d29922" font-size="8" font-family="Share Tech Mono">⚠ connecteur inversé</text>
+  <text x="950" y="374" text-anchor="middle" fill="#d29922" font-size="8" font-family="Share Tech Mono">GND (noir) en haut</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- LÉGENDE -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="14" y="560" width="600" height="88" rx="5" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="28" y="580" fill="#8b949e" font-size="9" font-family="Share Tech Mono">LÉGENDE</text>
+  <line x1="28" y1="594" x2="58" y2="594" stroke="#58a6ff" stroke-width="2"/>
+  <text x="66" y="598" fill="#e6edf3" font-size="9" font-family="Barlow">MAVLink UART (TELEM2)</text>
+  <line x1="28" y1="612" x2="58" y2="612" stroke="#e6edf3" stroke-width="2"/>
+  <text x="66" y="616" fill="#e6edf3" font-size="9" font-family="Barlow">3 fils blanc/rouge/noir (alim + CH1)</text>
+  <line x1="28" y1="630" x2="58" y2="630" stroke="#f0883e" stroke-width="1.5"/>
+  <text x="66" y="634" fill="#e6edf3" font-size="9" font-family="Barlow">Fil signal seul CH2 (orange)</text>
+  <line x1="28" y1="642" x2="58" y2="642" stroke="#d29922" stroke-width="1.5"/>
+  <text x="66" y="646" fill="#e6edf3" font-size="9" font-family="Barlow">Fil signal seul CH3 (jaune) + PPM SUM</text>
+  <line x1="200" y1="594" x2="230" y2="594" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="238" y="598" fill="#e6edf3" font-size="9" font-family="Barlow">Fil signal CH4 (vert) + Servos PWM</text>
+  <line x1="200" y1="612" x2="230" y2="612" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="238" y="616" fill="#e6edf3" font-size="9" font-family="Barlow">Fil signal CH5 (bleu)</text>
+  <line x1="200" y1="630" x2="230" y2="630" stroke="#f85149" stroke-width="2.5"/>
+  <text x="238" y="634" fill="#e6edf3" font-size="9" font-family="Barlow">Alimentation 5V câble Y (BEC)</text>
+  <line x1="200" y1="642" x2="230" y2="642" stroke="#d29922" stroke-width="2" stroke-dasharray="4,2"/>
+  <text x="238" y="646" fill="#e6edf3" font-size="9" font-family="Barlow">BEC → MAIN OUT 5 (alim rail servo)</text>
+</svg>
+</div>
+
+<!-- 03 CABLAGE DETAIL -->
+<h2 id="s3">03 Câblage détaillé</h2>
+
+<h3>A — Alimentation </h3>
+<p>Un BEC 5V.</p>
+<table>
+  <tr><th>BEC 5V (sortie Y)</th><th>Destination</th><th>Fils</th></tr>
+  <tr><td>Branche 1</td><td>BCUBE — connecteur power in</td><td><span class="wire-r">Rouge</span> + <span class="wire-b">Noir</span> (3 fils)</td></tr>
+</table>
+
+<div class="callout warn">
+  <span class="callout-icon">⚠</span>
+  <div class="callout-text"><strong>Rail MAIN OUT à alimenter séparément</strong> — Le Cube ne fournit pas de 5V sur ses sorties servo. Brancher un BEC sur le rail MAIN OUT sinon les servos ne reçoivent aucune alimentation.</div>
+</div>
+
+<h3>B — J5C01R → Encodeur BCUBE (signaux)</h3>
+<p>6 fils simples (1 conducteur chacun, signal seul). Le GND de référence est partagé via le câble d'alimentation.</p>
+<table>
+  <tr><th>J5C01R</th><th>BCUBE entrée</th><th>Note</th></tr>
+  <tr><td>CH1 Signal</td><td>IN1</td><td>Safran</td></tr>
+  <tr><td>CH2 Signal</td><td>IN2</td><td>Voile</td></tr>
+  <tr><td>CH3 Signal</td><td>IN3</td><td class="val-y">← levier de mode</td></tr>
+  <tr><td>CH4 Signal</td><td>IN4</td><td></td></tr>
+  <tr><td>CH5 Signal</td><td>IN5</td><td></td></tr>
+  <tr><td>CH6 Signal</td><td>IN6</td><td></td></tr>
+</table>
+
+<h3>C — Encodeur BCUBE → Cube Orange RC IN</h3>
+<p>Prise 4 pins isolée du BCUBE. Seuls GND et PPM sont câblés côté Cube.</p>
+<table>
+  <tr><th>BCUBE (prise 4 pins)</th><th>Cube Orange RC IN</th><th>Note</th></tr>
+  <tr><td>GND</td><td>GND</td><td><span class="wire-b">Noir</span></td></tr>
+  <tr><td>PPM</td><td>Signal</td><td><span class="wire-w">Blanc</span></td></tr>
+  <tr><td>+5V</td><td class="wire-w ">+5V</td><td>Rouge</td></tr>
+  <tr><td>MUX</td><td class="val-r">NON connecté</td><td>Non utilisé</td></tr>
+</table>
+
+<h3>D — Cube Orange TELEM2 → Raspberry Pi UART</h3>
+<p>Connecteur JST-GH 6 broches. Seulement TX, RX, GND utilisés. Niveaux 3.3V des deux côtés — pas de level shifter.</p>
+<table>
+  <tr><th>Cube TELEM2</th><th>Pin</th><th>Raspberry Pi</th><th>GPIO</th></tr>
+  <tr><td class="wire-r">5V</td><td>1</td><td class="val-r">— NON connecté</td><td>—</td></tr>
+  <tr><td class="wire-y">TX</td><td>2</td><td>RXD pin 10</td><td class="val-a">GPIO15</td></tr>
+  <tr><td class="wire-g">RX</td><td>3</td><td>TXD pin 8</td><td class="val-a">GPIO14</td></tr>
+  <tr><td>CTS</td><td>4</td><td class="val-r">— NON connecté</td><td>—</td></tr>
+  <tr><td>RTS</td><td>5</td><td class="val-r">— NON connecté</td><td>—</td></tr>
+  <tr><td class="wire-b">GND</td><td>6</td><td>GND pin 6</td><td>—</td></tr>
+</table>
+<div class="callout info">
+  <span class="callout-icon">ℹ</span>
+  <div class="callout-text"><strong>TX↔RX croisés</strong> — TX du Cube vers RX du Pi, et RX du Cube vers TX du Pi. C'est intentionnel.</div>
+</div>
+
+<h3>E — MAIN OUT → Servos</h3>
+<table>
+  <tr><th>MAIN OUT</th><th>Servo</th><th>SERVO_FUNCTION</th><th>Neutre</th></tr>
+  <tr><td>OUT 1</td><td>Safran (rudder)</td><td class="val-g">1 — RCPassThru ← IMPORTANT</td><td>~1500µs</td></tr>
+  <tr><td>OUT 2</td><td>Voile (sail)</td><td class="val-o">89 — MainSail</td><td>~1500µs</td></tr>
+</table>
+<div class="callout danger">
+  <span class="callout-icon">🔴</span>
+  <div class="callout-text"><strong>SERVO1_FUNCTION doit être 1 (RCPassThru)</strong> — Avec GroundSteering (26), ArduPilot recalcule en permanence la valeur et écrase les overrides du Pi après quelques cycles. En RCPassThru, ArduPilot transmet exactement ce qu'il reçoit sur CH1.</div>
+</div>
+
+<!-- 04 MISSION PLANNER -->
+<h2 id="s4">04 Configuration Mission Planner</h2>
+
+<h3>Paramètres essentiels (Full Parameter List)</h3>
+<table>
+  <tr><th>Paramètre</th><th>Valeur</th><th>Signification</th></tr>
+  <tr><td>SERIAL2_PROTOCOL</td><td class="val-g">2</td><td>MAVLink2 sur TELEM2</td></tr>
+  <tr><td>SERIAL2_BAUD</td><td class="val-g">57</td><td>57600 baud</td></tr>
+  <tr><td>MODE_CH</td><td class="val-y">3</td><td>CH3 = canal de sélection de mode</td></tr>
+  <tr><td>MODE1</td><td class="val-g">15</td><td>Guided — levier CH3 fond bas (~900µs)</td></tr>
+  <tr><td>MODE2</td><td class="val-g">15</td><td>Guided</td></tr>
+  <tr><td>MODE3</td><td class="val-g">15</td><td>Guided — levier CH3 mi-bas</td></tr>
+  <tr><td>MODE4</td><td class="val-r">0</td><td>Manual — levier CH3 mi-haut</td></tr>
+  <tr><td>MODE5</td><td class="val-r">0</td><td>Manual</td></tr>
+  <tr><td>MODE6</td><td class="val-r">0</td><td>Manual — levier CH3 fond haut (~2000µs)</td></tr>
+  <tr><td>SERVO1_FUNCTION</td><td class="val-g">1</td><td>RCPassThru — OBLIGATOIRE pour override Pi</td></tr>
+  <tr><td>SERVO2_FUNCTION</td><td class="val-o">89</td><td>MainSail (voile)</td></tr>
+  <tr><td>SERVO1_MIN</td><td class="val-a">1100</td><td>PWM minimum safran</td></tr>
+  <tr><td>SERVO1_MAX</td><td class="val-a">1900</td><td>PWM maximum safran</td></tr>
+  <tr><td>SERVO1_TRIM</td><td class="val-a">1500</td><td>PWM neutre safran</td></tr>
+  <tr><td>RC_PROTOCOLS</td><td class="val-a">1</td><td>PPM uniquement</td></tr>
+  <tr><td>FS_GCS_ENABLE</td><td class="val-r">0</td><td>Désactiver failsafe GCS pour le PoC</td></tr>
+</table>
+
+<div class="callout ok">
+  <span class="callout-icon">✓</span>
+  <div class="callout-text"><strong>Vérification Radio Calibration</strong> — Dans Setup → Mandatory Hardware → Radio Calibration, vérifier que CH3 varie bien de ~900µs (fond bas) à ~2000µs (fond haut). La frontière de bascule est à ~1400µs (mi-course du levier).</div>
+</div>
+
+<!-- 05 RASPBERRY PI -->
+<h2 id="s5">05 Configuration Raspberry Pi</h2>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <strong>Libérer le port série ttyAMA0 du Bluetooth</strong>
+      <p>Ajouter dans <code>/boot/firmware/config.txt</code> :</p>
+      <pre>dtoverlay=disable-bt
+enable_uart=1</pre>
+      <p>Désactiver le getty série :</p>
+      <pre>sudo systemctl disable hciuart
+sudo systemctl disable serial-getty@ttyAMA0.service
+sudo reboot</pre>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <strong>Installer pymavlink</strong>
+      <pre>pip install pymavlink --break-system-packages</pre>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <strong>Créer le répertoire de travail</strong>
+      <pre>mkdir -p /home/admin/focus</pre>
+    </div>
+  </div>
+</div>
+
+<!-- 06 SCRIPT -->
+<h2 id="s6">06 Script Python (v8 — version validée)</h2>
+
+<p>Fichier : <code>/home/admin/focus/test_mavlink_switch_v8.py</code></p>
+
+<pre>#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+<span class="cm">"""
+Focus PoC - Bascule RC / Pi via Cube Orange
+Strategie : MANUAL permanent + RC_CHANNELS_OVERRIDE sur CH1
+Le Pi lit CH3 via MAVLink et active/desactive l override.
+SERVO1_FUNCTION doit etre 1 (RCPassThru) dans Mission Planner.
+"""</span>
+
+<span class="kw">import</span> time
+<span class="kw">import</span> sys
+<span class="kw">from</span> pymavlink <span class="kw">import</span> mavutil
+
+<span class="cm"># ── Configuration ─────────────────────────────────────────────</span>
+SERIAL_PORT   = <span class="st">'/dev/serial0'</span>   <span class="cm"># port UART Pi</span>
+BAUD_RATE     = <span class="nu">57600</span>
+SYSID_GCS     = <span class="nu">255</span>
+IGNORE        = <span class="nu">65535</span>            <span class="cm"># valeur speciale = ne pas overrider ce canal</span>
+CH3_THRESHOLD = <span class="nu">1400</span>            <span class="cm"># µs : en dessous = Pi, au dessus = RC</span>
+TARGET_SYS    = <span class="nu">1</span>
+TARGET_COMP   = <span class="nu">1</span>
+
+<span class="cm"># ── Connexion ─────────────────────────────────────────────────</span>
+master = mavutil.<span class="fn">mavlink_connection</span>(SERIAL_PORT, baud=BAUD_RATE, source_system=SYSID_GCS)
+print(<span class="st">"[FOCUS] Attente heartbeat..."</span>)
+master.<span class="fn">wait_heartbeat</span>()
+print(<span class="st">f"[FOCUS] Connecte - sysid={master.target_system}"</span>)
+
+<span class="cm"># Demander les streams RC et SERVO au Cube</span>
+master.mav.<span class="fn">request_data_stream_send</span>(
+    TARGET_SYS, TARGET_COMP,
+    mavutil.mavlink.MAV_DATA_STREAM_RC_CHANNELS, <span class="nu">10</span>, <span class="nu">1</span>
+)
+master.mav.<span class="fn">request_data_stream_send</span>(
+    TARGET_SYS, TARGET_COMP,
+    mavutil.mavlink.MAV_DATA_STREAM_RAW_CONTROLLER, <span class="nu">10</span>, <span class="nu">1</span>
+)
+time.<span class="fn">sleep</span>(<span class="nu">0.5</span>)
+
+<span class="cm"># ── Helpers ───────────────────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">send_override_ch1</span>(pwm):
+    <span class="cm">"""Override CH1 (safran), tous les autres canaux ignores."""</span>
+    master.mav.<span class="fn">rc_channels_override_send</span>(
+        TARGET_SYS, TARGET_COMP,
+        pwm, IGNORE, IGNORE, IGNORE, IGNORE, IGNORE, IGNORE, IGNORE
+    )
+
+<span class="kw">def</span> <span class="fn">clear_override</span>():
+    <span class="cm">"""Relache tous les overrides - RC reprend la main."""</span>
+    master.mav.<span class="fn">rc_channels_override_send</span>(
+        TARGET_SYS, TARGET_COMP,
+        IGNORE, IGNORE, IGNORE, IGNORE, IGNORE, IGNORE, IGNORE, IGNORE
+    )
+
+<span class="kw">def</span> <span class="fn">send_heartbeat</span>():
+    master.mav.<span class="fn">heartbeat_send</span>(
+        mavutil.mavlink.MAV_TYPE_GCS,
+        mavutil.mavlink.MAV_AUTOPILOT_INVALID,
+        <span class="nu">0</span>, <span class="nu">0</span>, <span class="nu">0</span>
+    )
+
+<span class="cm"># Sweep de test : gauche / centre / droite / centre</span>
+SWEEP = [
+    (<span class="nu">1200</span>, <span class="st">"GAUCHE"</span>),
+    (<span class="nu">1500</span>, <span class="st">"CENTRE"</span>),
+    (<span class="nu">1800</span>, <span class="st">"DROITE"</span>),
+    (<span class="nu">1500</span>, <span class="st">"CENTRE"</span>),
+]
+
+<span class="cm"># ── Boucle principale ─────────────────────────────────────────</span>
+pi_in_control  = <span class="kw">False</span>
+current_pwm    = <span class="nu">1500</span>
+sweep_step     = <span class="nu">0</span>
+last_sweep     = <span class="nu">0</span>
+last_override  = <span class="nu">0</span>        <span class="cm"># envoi continu a 10Hz pour eviter timeout</span>
+last_heartbeat = <span class="nu">0</span>
+last_ch3       = <span class="kw">None</span>
+
+print(<span class="st">"[FOCUS] Pret - CH3 bas=Pi, CH3 haut=RC\n"</span>)
+
+<span class="kw">try</span>:
+    <span class="kw">while True</span>:
+        now = time.<span class="fn">monotonic</span>()
+
+        <span class="cm"># Heartbeat 1Hz (evite le failsafe GCS)</span>
+        <span class="kw">if</span> now - last_heartbeat >= <span class="nu">1.0</span>:
+            <span class="fn">send_heartbeat</span>()
+            last_heartbeat = now
+
+        <span class="cm"># Lire messages MAVLink</span>
+        msg = master.<span class="fn">recv_match</span>(blocking=<span class="kw">False</span>)
+        <span class="kw">if</span> msg:
+            mtype = msg.<span class="fn">get_type</span>()
+
+            <span class="cm"># Detecter position CH3 → bascule Pi/RC</span>
+            <span class="kw">if</span> mtype == <span class="st">'RC_CHANNELS'</span>:
+                ch3 = msg.chan3_raw
+                <span class="kw">if</span> last_ch3 <span class="kw">is None or</span> abs(ch3 - last_ch3) > <span class="nu">50</span>:
+                    last_ch3 = ch3
+                    <span class="kw">if</span> ch3 < CH3_THRESHOLD <span class="kw">and not</span> pi_in_control:
+                        pi_in_control = <span class="kw">True</span>
+                        sweep_step    = <span class="nu">0</span>
+                        last_sweep    = <span class="nu">0</span>
+                        current_pwm   = <span class="nu">1500</span>
+                        print(<span class="st">f"\n[FOCUS] CH3={ch3}us -> PI EN CONTROLE"</span>)
+                    <span class="kw">elif</span> ch3 >= CH3_THRESHOLD <span class="kw">and</span> pi_in_control:
+                        pi_in_control = <span class="kw">False</span>
+                        current_pwm   = <span class="nu">1500</span>
+                        <span class="fn">clear_override</span>()
+                        print(<span class="st">f"\n[FOCUS] CH3={ch3}us -> RC en controle"</span>)
+
+            <span class="cm"># Diagnostic sorties servo en temps reel</span>
+            <span class="kw">elif</span> mtype == <span class="st">'SERVO_OUTPUT_RAW'</span> <span class="kw">and</span> pi_in_control:
+                print(<span class="st">f"  [DIAG] OUT1={msg.servo1_raw} OUT2={msg.servo2_raw}"</span>, end=<span class="st">'\r'</span>)
+
+        <span class="cm"># Mode Pi actif</span>
+        <span class="kw">if</span> pi_in_control:
+            <span class="cm"># Changer valeur toutes les 1.5s</span>
+            <span class="kw">if</span> now - last_sweep >= <span class="nu">1.5</span>:
+                last_sweep = now
+                current_pwm, label = SWEEP[sweep_step % len(SWEEP)]
+                print(<span class="st">f"\n[PI->SERVO] Safran {label} -> {current_pwm}us"</span>)
+                sweep_step += <span class="nu">1</span>
+
+            <span class="cm"># Envoyer l'override EN CONTINU a 10Hz (timeout ArduPilot ~0.5s)</span>
+            <span class="kw">if</span> now - last_override >= <span class="nu">0.1</span>:
+                last_override = now
+                <span class="fn">send_override_ch1</span>(current_pwm)
+
+        time.<span class="fn">sleep</span>(<span class="nu">0.02</span>)  <span class="cm"># boucle 50Hz</span>
+
+<span class="kw">except</span> KeyboardInterrupt:
+    print(<span class="st">"\n[FOCUS] Arret"</span>)
+    <span class="fn">clear_override</span>()
+    master.<span class="fn">close</span>()
+    print(<span class="st">"[FOCUS] Connexion fermee."</span>)
+    sys.<span class="fn">exit</span>(<span class="nu">0</span>)
+</pre>
+
+<!-- 07 PROCEDURE -->
+<h2 id="s7">07 Procédure de test</h2>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <strong>Vérifications avant mise sous tension</strong>
+      <p>Connecteurs MAIN OUT retournés à 180° (GND en haut). TX↔RX croisés sur le câble TELEM2↔Pi. BEC branché sur le rail MAIN OUT. +5V de la prise 4 pins BCUBE non connecté côté Cube.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <strong>Vérification Radio Calibration (Mission Planner)</strong>
+      <p>Setup → Radio Calibration → vérifier CH3 entre ~900µs et ~2000µs. Mettre SERVO1_FUNCTION=1, écrire les paramètres.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <strong>Test manuel avant de brancher le Pi</strong>
+      <p>CH3 haut (Manual) → bouger le joystick CH1 → le safran doit répondre. Valide que le câblage servo est correct.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <strong>Lancer le script Pi (CH3 haut = RC control)</strong>
+      <pre>python3 /home/admin/focus/test_mavlink_switch_v8.py</pre>
+      <p>Attendre l'affichage <code>[FOCUS] Pret</code>.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <strong>Bascule CH3 bas → Pi en contrôle</strong>
+      <p>Le safran doit faire des allers-retours automatiques GAUCHE/CENTRE/DROITE toutes les 1.5s. Le terminal affiche les valeurs OUT1 en temps réel.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <strong>Bascule CH3 haut → RC reprend le contrôle</strong>
+      <p>Le servo cesse de bouger automatiquement. La télécommande reprend le contrôle immédiatement.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 08 DEPANNAGE -->
+<h2 id="s8">08 Dépannage</h2>
+
+<table>
+  <tr><th>Symptôme</th><th>Cause probable</th><th>Solution</th></tr>
+  <tr><td>Servo ne bouge jamais</td><td>Rail MAIN OUT non alimenté</td><td>Brancher BEC sur le rail MAIN OUT</td></tr>
+  <tr><td>Servo bouge 1 fois puis bloque</td><td>SERVO1_FUNCTION ≠ 1</td><td>Mettre SERVO1_FUNCTION=1 (RCPassThru)</td></tr>
+  <tr><td>CH3 non détecté</td><td>Stream RC non reçu</td><td>request_data_stream_send déjà dans le script</td></tr>
+  <tr><td>Cycling MANUAL/HOLD en boucle</td><td>FS_GCS_ENABLE=1</td><td>Mettre FS_GCS_ENABLE=0</td></tr>
+  <tr><td>OUT1/OUT2 absents de Servo/Relay</td><td>Normal avec FUNCTION=1</td><td>Vérifier SERVO_OUTPUT_RAW via le script</td></tr>
+  <tr><td>sysid=0 compid=0 à la connexion</td><td>Heartbeat reçu avant config</td><td>Sans impact, TARGET_SYS=1 forcé dans le script</td></tr>
+  <tr><td>Servo voile ne répond pas au RC</td><td>SERVO2_FUNCTION=89 = mode sailboat</td><td>Mettre SERVO2_FUNCTION=1 pour test direct</td></tr>
+</table>
+
+<footer>
+  Focus PoC — Documentation V2 · 25/04/2026 · ArduRover 4.6.3 · pymavlink · RC_CHANNELS_OVERRIDE
+</footer>
+</body>
+</html>

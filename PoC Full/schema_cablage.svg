@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1060 660" xmlns="http://www.w3.org/2000/svg" width="100%" style="display:block;margin:auto;">
+  <defs>
+    <marker id="a"  markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#58a6ff"/></marker>
+    <marker id="ag" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#3fb950"/></marker>
+    <marker id="ao" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f0883e"/></marker>
+    <marker id="ay" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#d29922"/></marker>
+    <marker id="ar" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f85149"/></marker>
+    <marker id="aw" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#e6edf3"/></marker>
+  </defs>
+  <rect width="1060" height="660" fill="#0d1117"/>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- J4C05 TRANSMETTEUR -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="14" y="30" width="120" height="76" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+  <text x="74" y="52" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">TRANSMETTEUR</text>
+  <text x="74" y="69" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="bold" font-family="Barlow">J4C05</text>
+  <text x="74" y="85" text-anchor="middle" fill="#d29922" font-size="9" font-family="Share Tech Mono">CH3 levier mode</text>
+  <text x="74" y="98" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">bas=Pi / haut=RC</text>
+  <!-- wireless -->
+  <line x1="136" y1="68" x2="178" y2="68" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a)"/>
+  <text x="157" y="61" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">2.4GHz</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- J5C01R RÉCEPTEUR avec ports numérotés -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="180" y="20" width="130" height="170" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+  <text x="245" y="40" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">RÉCEPTEUR</text>
+  <text x="245" y="56" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="bold" font-family="Barlow">J5C01R</text>
+
+  <!-- Port 1 : 3 fils (alim + signal CH1) -->
+  <rect x="190" y="68" width="40" height="14" rx="2" fill="#0d1117" stroke="#e6edf3" stroke-width="1"/>
+  <text x="210" y="79" text-anchor="middle" fill="#e6edf3" font-size="8" font-family="Share Tech Mono">1</text>
+  <text x="238" y="79" fill="#8b949e" font-size="8" font-family="Share Tech Mono">GND+5V+CH1</text>
+  <text x="238" y="90" fill="#8b949e" font-size="7" font-family="Share Tech Mono">signal en haut</text>
+
+  <!-- Port 2 : signal CH2 orange -->
+  <rect x="190" y="100" width="40" height="14" rx="2" fill="#0d1117" stroke="#f0883e" stroke-width="1"/>
+  <text x="210" y="111" text-anchor="middle" fill="#f0883e" font-size="8" font-family="Share Tech Mono">2</text>
+  <text x="238" y="111" fill="#f0883e" font-size="8" font-family="Share Tech Mono">CH2 — orange</text>
+
+  <!-- Port 3 : signal CH3 jaune -->
+  <rect x="190" y="120" width="40" height="14" rx="2" fill="#0d1117" stroke="#d29922" stroke-width="1"/>
+  <text x="210" y="131" text-anchor="middle" fill="#d29922" font-size="8" font-family="Share Tech Mono">3</text>
+  <text x="238" y="131" fill="#d29922" font-size="8" font-family="Share Tech Mono">CH3 — jaune</text>
+
+  <!-- Port 4 : signal CH4 vert -->
+  <rect x="190" y="140" width="40" height="14" rx="2" fill="#0d1117" stroke="#3fb950" stroke-width="1"/>
+  <text x="210" y="151" text-anchor="middle" fill="#3fb950" font-size="8" font-family="Share Tech Mono">4</text>
+  <text x="238" y="151" fill="#3fb950" font-size="8" font-family="Share Tech Mono">CH4 — vert</text>
+
+  <!-- Port 5 : signal CH5 bleu -->
+  <rect x="190" y="160" width="40" height="14" rx="2" fill="#0d1117" stroke="#58a6ff" stroke-width="1"/>
+  <text x="210" y="171" text-anchor="middle" fill="#58a6ff" font-size="8" font-family="Share Tech Mono">5</text>
+  <text x="238" y="171" fill="#58a6ff" font-size="8" font-family="Share Tech Mono">CH5 — bleu</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- BCUBE PPM ENCODEUR -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="380" y="20" width="150" height="200" rx="6" fill="#161b22" stroke="#f0883e" stroke-width="1.5"/>
+  <text x="455" y="42" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">ENCODEUR PPM</text>
+  <text x="455" y="58" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="bold" font-family="Barlow">BCUBE</text>
+
+  <!-- Côté récepteur (gauche du BCUBE) : peigne signaux -->
+  <text x="388" y="78" fill="#8b949e" font-size="7" font-family="Share Tech Mono">← côté récepteur</text>
+
+  <!-- 3 fils (alim) : IN1 prise 3 fils -->
+  <rect x="388" y="82" width="36" height="14" rx="2" fill="#0d1117" stroke="#e6edf3" stroke-width="1"/>
+  <text x="406" y="93" text-anchor="middle" fill="#e6edf3" font-size="7" font-family="Share Tech Mono">IN1 3f</text>
+
+  <!-- signal CH2 orange IN2 -->
+  <rect x="388" y="102" width="36" height="14" rx="2" fill="#0d1117" stroke="#f0883e" stroke-width="1"/>
+  <text x="406" y="113" text-anchor="middle" fill="#f0883e" font-size="7" font-family="Share Tech Mono">IN2</text>
+
+  <!-- signal CH3 jaune IN3 -->
+  <rect x="388" y="122" width="36" height="14" rx="2" fill="#0d1117" stroke="#d29922" stroke-width="1"/>
+  <text x="406" y="133" text-anchor="middle" fill="#d29922" font-size="7" font-family="Share Tech Mono">IN3</text>
+
+  <!-- signal CH4 vert IN4 -->
+  <rect x="388" y="142" width="36" height="14" rx="2" fill="#0d1117" stroke="#3fb950" stroke-width="1"/>
+  <text x="406" y="153" text-anchor="middle" fill="#3fb950" font-size="7" font-family="Share Tech Mono">IN4</text>
+
+  <!-- signal CH5 bleu IN5 -->
+  <rect x="388" y="162" width="36" height="14" rx="2" fill="#0d1117" stroke="#58a6ff" stroke-width="1"/>
+  <text x="406" y="173" text-anchor="middle" fill="#58a6ff" font-size="7" font-family="Share Tech Mono">IN5</text>
+
+  <!-- Prise alim power in (BEC) -->
+  <rect x="388" y="188" width="60" height="18" rx="2" fill="#0d1117" stroke="#f85149" stroke-width="1.5"/>
+  <text x="418" y="201" text-anchor="middle" fill="#f85149" font-size="8" font-family="Share Tech Mono">PWR IN (BEC)</text>
+
+  <!-- Côté sortie PPM (droite BCUBE) -->
+  <text x="452" y="78" fill="#8b949e" font-size="7" font-family="Share Tech Mono">sortie Cube →</text>
+  <rect x="492" y="82" width="30" height="50" rx="2" fill="#0d1117" stroke="#d29922" stroke-width="1.5"/>
+  <text x="507" y="98" text-anchor="middle" fill="#8b949e" font-size="7" font-family="Share Tech Mono">GND</text>
+  <text x="507" y="111" text-anchor="middle" fill="#d29922" font-size="7" font-family="Share Tech Mono">PPM</text>
+  <text x="507" y="124" text-anchor="middle" fill="#8b949e" font-size="7" font-family="Share Tech Mono">+5V</text>
+  <text x="507" y="136" text-anchor="middle" fill="#8b949e" font-size="7" font-family="Share Tech Mono">MUX</text>
+  <text x="455" y="150" text-anchor="middle" fill="#8b949e" font-size="7" font-family="Share Tech Mono">3 fils → RC IN</text>
+
+  <!-- ══ Câbles J5C01R → BCUBE ══ -->
+  <!-- 3 fils port1 → IN1 -->
+  <line x1="230" y1="75" x2="388" y2="89" stroke="#e6edf3" stroke-width="2" marker-end="url(#aw)"/>
+  <text x="310" y="76" fill="#e6edf3" font-size="8" font-family="Share Tech Mono">3 fils blanc/rouge/noir</text>
+
+  <!-- CH2 orange port2 → IN2 -->
+  <line x1="230" y1="107" x2="388" y2="109" stroke="#f0883e" stroke-width="1.5" marker-end="url(#ao)"/>
+  <!-- CH3 jaune port3 → IN3 -->
+  <line x1="230" y1="127" x2="388" y2="129" stroke="#d29922" stroke-width="1.5" marker-end="url(#ay)"/>
+  <!-- CH4 vert port4 → IN4 -->
+  <line x1="230" y1="147" x2="388" y2="149" stroke="#3fb950" stroke-width="1.5" marker-end="url(#ag)"/>
+  <!-- CH5 bleu port5 → IN5 -->
+  <line x1="230" y1="167" x2="388" y2="167" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- BEC 5V -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="380" y="340" width="150" height="70" rx="6" fill="#1a1208" stroke="#d29922" stroke-width="2"/>
+  <text x="455" y="364" text-anchor="middle" fill="#d29922" font-size="9" font-family="Share Tech Mono">ALIMENTATION</text>
+  <text x="455" y="382" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="bold" font-family="Barlow">BEC 5V</text>
+  <text x="455" y="400" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">depuis LiPo batterie RC</text>
+
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- CUBE ORANGE -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="620" y="20" width="200" height="430" rx="8" fill="#1a1030" stroke="#bc8cff" stroke-width="2"/>
+  <text x="720" y="46" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">AUTOPILOTE</text>
+  <text x="720" y="64" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="bold" font-family="Barlow">Cube Orange</text>
+  <text x="720" y="80" text-anchor="middle" fill="#bc8cff" font-size="9" font-family="Share Tech Mono">ArduRover 4.6.3</text>
+
+  <!-- RC IN -->
+  <rect x="636" y="92" width="100" height="26" rx="3" fill="#0d1117" stroke="#d29922" stroke-width="1.5"/>
+  <text x="686" y="109" text-anchor="middle" fill="#d29922" font-size="10" font-family="Share Tech Mono">RC IN (PPM)</text>
+
+  <!-- TELEM2 -->
+  <rect x="636" y="134" width="100" height="26" rx="3" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="686" y="151" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="Share Tech Mono">TELEM2 UART</text>
+
+  <!-- MAIN OUT ports -->
+  <text x="686" y="194" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">MAIN OUT — noir en haut</text>
+
+  <!-- OUT1 safran -->
+  <rect x="636" y="200" width="100" height="26" rx="3" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="686" y="217" text-anchor="middle" fill="#3fb950" font-size="9" font-family="Share Tech Mono">OUT 1 — Safran</text>
+
+  <!-- OUT2 voile -->
+  <rect x="636" y="232" width="100" height="26" rx="3" fill="#0d1117" stroke="#3fb950" stroke-width="1"/>
+  <text x="686" y="249" text-anchor="middle" fill="#3fb950" font-size="9" font-family="Share Tech Mono">OUT 2 — Voile</text>
+
+  <!-- OUT3 -->
+  <rect x="636" y="264" width="100" height="20" rx="3" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+  <text x="686" y="278" text-anchor="middle" fill="#30363d" font-size="8" font-family="Share Tech Mono">OUT 3</text>
+  <!-- OUT4 -->
+  <rect x="636" y="290" width="100" height="20" rx="3" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+  <text x="686" y="304" text-anchor="middle" fill="#30363d" font-size="8" font-family="Share Tech Mono">OUT 4</text>
+
+  <!-- OUT5 BEC alim rail -->
+  <rect x="636" y="316" width="100" height="26" rx="3" fill="#1a1208" stroke="#d29922" stroke-width="1.5"/>
+  <text x="686" y="329" text-anchor="middle" fill="#d29922" font-size="9" font-family="Share Tech Mono">OUT 5 — BEC</text>
+  <text x="686" y="340" text-anchor="middle" fill="#8b949e" font-size="7" font-family="Share Tech Mono">alim rail servos</text>
+
+  <!-- logique interne -->
+  <rect x="634" y="360" width="168" height="76" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+  <text x="718" y="377" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">Mode MANUAL permanent</text>
+  <text x="718" y="393" text-anchor="middle" fill="#f85149" font-size="8" font-family="Share Tech Mono">CH3 ≥ 1400 → RC direct</text>
+  <text x="718" y="409" text-anchor="middle" fill="#3fb950" font-size="8" font-family="Share Tech Mono">CH3 &lt; 1400 → Pi override</text>
+  <text x="718" y="425" text-anchor="middle" fill="#bc8cff" font-size="7" font-family="Share Tech Mono">SERVO1_FUNCTION = 1 (PassThru)</text>
+
+  <!-- BCUBE PPM OUT → Cube RC IN (3 fils) -->
+  <line x1="522" y1="100" x2="634" y2="105" stroke="#d29922" stroke-width="2" marker-end="url(#ay)"/>
+  <text x="578" y="94" text-anchor="middle" fill="#d29922" font-size="8" font-family="Share Tech Mono">3 fils : GND + PPM</text>
+  <text x="578" y="106" text-anchor="middle" fill="#8b949e" font-size="7" font-family="Share Tech Mono">(+5V non branché)</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- TELEM2 → Raspberry Pi -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="380" y="460" width="200" height="100" rx="8" fill="#071d2a" stroke="#58a6ff" stroke-width="2"/>
+  <text x="480" y="484" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">ORDINATEUR EMBARQUÉ</text>
+  <text x="480" y="503" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="bold" font-family="Barlow">Raspberry Pi 4</text>
+  <text x="480" y="520" text-anchor="middle" fill="#58a6ff" font-size="9" font-family="Share Tech Mono">/dev/serial0 · GPIO14/15</text>
+  <text x="480" y="536" text-anchor="middle" fill="#3fb950" font-size="9" font-family="Share Tech Mono">pymavlink · RC_CHANNELS_OVERRIDE</text>
+  <text x="480" y="550" text-anchor="middle" fill="#d29922" font-size="8" font-family="Share Tech Mono">lit CH3, override CH1 à 10Hz</text>
+
+  <!-- TELEM2 ↔ Pi -->
+  <line x1="636" y1="147" x2="582" y2="480" stroke="#58a6ff" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="585" y1="500" x2="636" y2="165" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#a)"/>
+  <text x="616" y="312" fill="#58a6ff" font-size="8" font-family="Share Tech Mono">MAVLink</text>
+  <text x="626" y="324" fill="#58a6ff" font-size="8" font-family="Share Tech Mono">57600bd</text>
+
+  <!-- BEC → OUT5 du Cube -->
+  <line x1="530" y1="375" x2="620" y2="329" stroke="#d29922" stroke-width="2" stroke-dasharray="5,2" marker-end="url(#ay)"/>
+  <text x="552" y="368" fill="#d29922" font-size="8" font-family="Share Tech Mono">BEC → MAIN OUT 5</text>
+  <text x="552" y="380" fill="#8b949e" font-size="7" font-family="Share Tech Mono">(alim rail servos)</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- SERVOS -->
+  <!-- ══════════════════════════════════════════════ -->
+
+  <!-- Servo safran OUT1 -->
+  <rect x="870" y="185" width="160" height="62" rx="5" fill="#071d0d" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="950" y="206" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">SERVO SAFRAN</text>
+  <text x="950" y="224" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold" font-family="Barlow">Gouvernail</text>
+  <text x="950" y="240" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">noir en haut · PWM 50Hz</text>
+  <line x1="738" y1="213" x2="868" y2="213" stroke="#3fb950" stroke-width="2" marker-end="url(#ag)"/>
+  <text x="803" y="206" text-anchor="middle" fill="#3fb950" font-size="8" font-family="Share Tech Mono">OUT 1</text>
+
+  <!-- Servo voile OUT2 -->
+  <rect x="870" y="265" width="160" height="62" rx="5" fill="#071d0d" stroke="#3fb950" stroke-width="1"/>
+  <text x="950" y="286" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Share Tech Mono">SERVO VOILE</text>
+  <text x="950" y="304" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold" font-family="Barlow">Winch voile</text>
+  <text x="950" y="320" text-anchor="middle" fill="#8b949e" font-size="8" font-family="Share Tech Mono">noir en haut · PWM 50Hz</text>
+  <line x1="738" y1="245" x2="868" y2="293" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="5,2" marker-end="url(#ag)"/>
+  <text x="803" y="262" text-anchor="middle" fill="#3fb950" font-size="8" font-family="Share Tech Mono">OUT 2</text>
+
+  <!-- Warning inversé -->
+  <rect x="870" y="345" width="160" height="36" rx="4" fill="#2d1f00" stroke="#d29922" stroke-width="1"/>
+  <text x="950" y="359" text-anchor="middle" fill="#d29922" font-size="8" font-family="Share Tech Mono">⚠ connecteur inversé</text>
+  <text x="950" y="374" text-anchor="middle" fill="#d29922" font-size="8" font-family="Share Tech Mono">GND (noir) en haut</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- LÉGENDE -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="14" y="560" width="600" height="88" rx="5" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="28" y="580" fill="#8b949e" font-size="9" font-family="Share Tech Mono">LÉGENDE</text>
+  <line x1="28" y1="594" x2="58" y2="594" stroke="#58a6ff" stroke-width="2"/>
+  <text x="66" y="598" fill="#e6edf3" font-size="9" font-family="Barlow">MAVLink UART (TELEM2)</text>
+  <line x1="28" y1="612" x2="58" y2="612" stroke="#e6edf3" stroke-width="2"/>
+  <text x="66" y="616" fill="#e6edf3" font-size="9" font-family="Barlow">3 fils blanc/rouge/noir (alim + CH1)</text>
+  <line x1="28" y1="630" x2="58" y2="630" stroke="#f0883e" stroke-width="1.5"/>
+  <text x="66" y="634" fill="#e6edf3" font-size="9" font-family="Barlow">Fil signal seul CH2 (orange)</text>
+  <line x1="28" y1="642" x2="58" y2="642" stroke="#d29922" stroke-width="1.5"/>
+  <text x="66" y="646" fill="#e6edf3" font-size="9" font-family="Barlow">Fil signal seul CH3 (jaune) + PPM SUM</text>
+  <line x1="200" y1="594" x2="230" y2="594" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="238" y="598" fill="#e6edf3" font-size="9" font-family="Barlow">Fil signal CH4 (vert) + Servos PWM</text>
+  <line x1="200" y1="612" x2="230" y2="612" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="238" y="616" fill="#e6edf3" font-size="9" font-family="Barlow">Fil signal CH5 (bleu)</text>
+  <line x1="200" y1="630" x2="230" y2="630" stroke="#f85149" stroke-width="2.5"/>
+  <text x="238" y="634" fill="#e6edf3" font-size="9" font-family="Barlow">Alimentation 5V câble Y (BEC)</text>
+  <line x1="200" y1="642" x2="230" y2="642" stroke="#d29922" stroke-width="2" stroke-dasharray="4,2"/>
+  <text x="238" y="646" fill="#e6edf3" font-size="9" font-family="Barlow">BEC → MAIN OUT 5 (alim rail servo)</text>
+</svg>

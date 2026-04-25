@@ -1,4 +1,5 @@
-# 🚢 Câblage Raspberry Pi ↔ Cube Orange
+# 🚢 PoC "Commande des servos" depuis Raspberry Pi ↔ Cube Orange
+
 ### Guide de câblage UART — Battleboats 2026 
 
 > Guide visuel étape par étape pour connecter le Raspberry Pi au Cube Orange (contrôleur de vol ArduPilot), le récepteur radio via un encodeur PPM, les servos et le BEC — à destination des débutants.

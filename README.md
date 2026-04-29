@@ -2,6 +2,9 @@
 
 Voici quelques ressources aind de vous simplifier le codage. 
 
+#♠ LATEST UPDATE --> LORA 
+Vous trouverez dans le fichier LORA les données de connexion (pour la régate une URL de config vous sera fournie) au réseau ainsi que le format des messages
+
 >  📁 PoC Full
 
 Contient un PoC sur comment interfacer tous les élements nécéssaires à la course: Télécommande, récepteur, encodeur, Cube Orange, Raspberry Pi et les servos.

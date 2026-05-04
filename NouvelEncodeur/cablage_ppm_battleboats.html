@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battleboats 2026 — Câblage PPM Encoder</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f4f8;
+    --panel: #ffffff;
+    --border: #c8daea;
+    --accent: #0077cc;
+    --accent2: #00a86b;
+    --accent3: #e05a00;
+    --warn: #d97700;
+    --text: #1a2a3a;
+    --text-dim: #6b8aaa;
+    --nano: #0066bb;
+    --cube: #5c2d91;
+    --recept: #1a7a4a;
+    --bec: #b84500;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  header {
+    background: linear-gradient(135deg, #0055aa 0%, #0088dd 100%);
+    border-bottom: 3px solid #004499;
+    padding: 28px 48px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .logo {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: #a8d8ff;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+  }
+
+  h1 span { color: #7dd4ff; }
+
+  .subtitle {
+    font-size: 13px;
+    color: #a8ccee;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 32px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 12px rgba(0,100,200,0.07);
+  }
+
+  .card h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0055aa;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e0eaf4;
+  }
+
+  /* === SVG DIAGRAM === */
+  .diagram-wrap {
+    background: #f7faff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+  }
+
+  svg { display: block; margin: 0 auto; }
+
+  /* === TABLE === */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  th {
+    background: #e8f2fc;
+    color: #0055aa;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 2px solid #c8daea;
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #e8f0f8;
+    vertical-align: middle;
+    color: #1a2a3a;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f0f7ff; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .tag-nano { background: #ddeeff; color: #0055bb; border: 1px solid #aaccee; }
+  .tag-cube { background: #ede5f8; color: #5c2d91; border: 1px solid #c9aaee; }
+  .tag-bec  { background: #fff0e5; color: #b84500; border: 1px solid #ffbb88; }
+  .tag-recept { background: #e5f5ee; color: #1a7a4a; border: 1px solid #88ccaa; }
+
+  .wire {
+    display: inline-block;
+    width: 36px;
+    height: 8px;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  .warn-box {
+    background: #fffbf0;
+    border: 1px solid #ffe0a0;
+    border-left: 4px solid var(--warn);
+    border-radius: 4px;
+    padding: 14px 18px;
+    margin-top: 20px;
+    color: #7a5500;
+    font-size: 13px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .warn-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  .info-box {
+    background: #eef6ff;
+    border: 1px solid #b8d8f4;
+    border-left: 4px solid var(--accent);
+    border-radius: 4px;
+    padding: 14px 18px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #1a4a7a;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .param-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e8f0f8;
+    font-size: 14px;
+  }
+  .param-row:last-child { border-bottom: none; }
+  .param-key { font-family: 'Share Tech Mono', monospace; color: #0066aa; font-size: 13px; }
+  .param-val { font-family: 'Share Tech Mono', monospace; color: #cc6600; font-size: 13px; font-weight: 700; }
+  .param-desc { color: var(--text-dim); font-size: 12px; }
+
+  footer {
+    background: linear-gradient(135deg, #0055aa 0%, #0088dd 100%);
+    border-top: 3px solid #004499;
+    padding: 20px 48px;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: #a8ccee;
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">⚓ BATTLEBOATS 2026 · TOULON · MAI 2026</div>
+    <h1>Câblage <span>PPM Encoder</span></h1>
+    <div class="subtitle">Arduino Nano CH340 · ArduPPM v2.3.16 · Joysway J5C01R → Cube Orange</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- SCHEMA GENERAL -->
+  <div class="section-title">01 · Schéma général</div>
+  <div class="card">
+    <h2>Vue d'ensemble du système</h2>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 1060 340" width="1060" height="340" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#0077cc"/>
+          </marker>
+          <marker id="arr-grn" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#00a86b"/>
+          </marker>
+          <marker id="arr-org" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#e05a00"/>
+          </marker>
+          <marker id="arr-yel" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#d97700"/>
+          </marker>
+          <marker id="arr-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#cc2200"/>
+          </marker>
+          <marker id="arr-gray" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#888"/>
+          </marker>
+        </defs>
+
+        <!-- BEC -->
+        <rect x="20" y="120" width="140" height="100" rx="6" fill="#fff4ee" stroke="#e05a00" stroke-width="1.5"/>
+        <text x="90" y="148" text-anchor="middle" fill="#b84500" font-family="Share Tech Mono" font-size="11" letter-spacing="1">BEC</text>
+        <text x="90" y="166" text-anchor="middle" fill="#e05a00" font-family="Barlow" font-size="12" font-weight="700">5V DC</text>
+        <text x="90" y="184" text-anchor="middle" fill="#999" font-family="Share Tech Mono" font-size="10">LiFe 6.4V</text>
+        <text x="90" y="200" text-anchor="middle" fill="#999" font-family="Share Tech Mono" font-size="10">→ 5V stabilisé</text>
+        <rect x="155" y="148" width="10" height="6" rx="1" fill="#cc2200"/>
+        <text x="161" y="144" text-anchor="middle" fill="#cc2200" font-family="Share Tech Mono" font-size="9">+5V</text>
+        <rect x="155" y="168" width="10" height="6" rx="1" fill="#888"/>
+        <text x="161" y="164" text-anchor="middle" fill="#888" font-family="Share Tech Mono" font-size="9">GND</text>
+
+        <!-- RECEPTEUR J5C01R -->
+        <rect x="200" y="60" width="200" height="220" rx="6" fill="#edf8f2" stroke="#1a7a4a" stroke-width="1.5"/>
+        <text x="300" y="88" text-anchor="middle" fill="#1a7a4a" font-family="Share Tech Mono" font-size="10" letter-spacing="1">RÉCEPTEUR</text>
+        <text x="300" y="106" text-anchor="middle" fill="#1a5c38" font-family="Barlow" font-size="13" font-weight="700">Joysway J5C01R</text>
+        <text x="300" y="122" text-anchor="middle" fill="#888" font-family="Share Tech Mono" font-size="9">5 canaux PWM</text>
+        <text x="220" y="148" fill="#1a7a4a" font-family="Share Tech Mono" font-size="11">CH1</text>
+        <text x="220" y="168" fill="#1a7a4a" font-family="Share Tech Mono" font-size="11">CH2</text>
+        <text x="220" y="188" fill="#1a7a4a" font-family="Share Tech Mono" font-size="11">CH3</text>
+        <text x="220" y="208" fill="#1a7a4a" font-family="Share Tech Mono" font-size="11">CH4</text>
+        <text x="220" y="228" fill="#1a7a4a" font-family="Share Tech Mono" font-size="11">CH5</text>
+        <text x="258" y="148" fill="#888" font-family="Share Tech Mono" font-size="9">gouvernail</text>
+        <text x="258" y="168" fill="#888" font-family="Share Tech Mono" font-size="9">voile</text>
+        <text x="258" y="188" fill="#ccc" font-family="Share Tech Mono" font-size="9">-</text>
+        <text x="258" y="208" fill="#ccc" font-family="Share Tech Mono" font-size="9">-</text>
+        <text x="258" y="228" fill="#888" font-family="Share Tech Mono" font-size="9">RC/Auto</text>
+        <circle cx="395" cy="144" r="4" fill="#0077cc"/>
+        <circle cx="395" cy="164" r="4" fill="#0077cc"/>
+        <circle cx="395" cy="184" r="4" fill="#ccc"/>
+        <circle cx="395" cy="204" r="4" fill="#ccc"/>
+        <circle cx="395" cy="224" r="4" fill="#d97700"/>
+        <circle cx="395" cy="264" r="4" fill="#cc2200"/>
+        <circle cx="395" cy="244" r="4" fill="#888"/>
+        <text x="388" y="264" text-anchor="end" fill="#cc2200" font-family="Share Tech Mono" font-size="9">+5V</text>
+        <text x="388" y="244" text-anchor="end" fill="#888" font-family="Share Tech Mono" font-size="9">GND</text>
+
+        <!-- ARDUINO NANO -->
+        <rect x="470" y="40" width="200" height="260" rx="6" fill="#eef5ff" stroke="#0066bb" stroke-width="1.5"/>
+        <text x="570" y="68" text-anchor="middle" fill="#0066bb" font-family="Share Tech Mono" font-size="10" letter-spacing="1">PPM ENCODER</text>
+        <text x="570" y="86" text-anchor="middle" fill="#0044aa" font-family="Barlow" font-size="13" font-weight="700">Arduino Nano</text>
+        <text x="570" y="102" text-anchor="middle" fill="#888" font-family="Share Tech Mono" font-size="9">ArduPPM v2.3.16</text>
+        <text x="488" y="136" fill="#5599cc" font-family="Share Tech Mono" font-size="10">RX0</text>
+        <text x="488" y="152" fill="#5599cc" font-family="Share Tech Mono" font-size="10">TX1</text>
+        <text x="488" y="168" fill="#5599cc" font-family="Share Tech Mono" font-size="10">D2</text>
+        <text x="488" y="186" fill="#0055bb" font-family="Share Tech Mono" font-size="10" font-weight="bold">D3</text>
+        <text x="488" y="204" fill="#0055bb" font-family="Share Tech Mono" font-size="10" font-weight="bold">D4</text>
+        <text x="488" y="222" fill="#bbb" font-family="Share Tech Mono" font-size="10">D5</text>
+        <text x="522" y="222" fill="#bbb" font-family="Share Tech Mono" font-size="9">non utilisé</text>
+        <text x="488" y="240" fill="#bbb" font-family="Share Tech Mono" font-size="10">D6</text>
+        <text x="522" y="240" fill="#bbb" font-family="Share Tech Mono" font-size="9">non utilisé</text>
+        <text x="488" y="258" fill="#cc8800" font-family="Share Tech Mono" font-size="10" font-weight="bold">D7</text>
+        <circle cx="473" cy="132" r="4" fill="#5599cc" opacity="0.5"/>
+        <circle cx="473" cy="148" r="4" fill="#5599cc" opacity="0.5"/>
+        <circle cx="473" cy="164" r="4" fill="#5599cc" opacity="0.5"/>
+        <circle cx="473" cy="182" r="4" fill="#0077cc"/>
+        <circle cx="473" cy="200" r="4" fill="#0077cc"/>
+        <circle cx="473" cy="218" r="4" fill="#ccc"/>
+        <circle cx="473" cy="236" r="4" fill="#ccc"/>
+        <circle cx="473" cy="254" r="4" fill="#d97700"/>
+        <text x="615" y="136" fill="#cc2200" font-family="Share Tech Mono" font-size="10">5V</text>
+        <text x="615" y="154" fill="#888" font-family="Share Tech Mono" font-size="10">GND</text>
+        <text x="615" y="200" fill="#00a86b" font-family="Share Tech Mono" font-size="10" font-weight="bold">D10</text>
+        <text x="615" y="218" fill="#888" font-family="Share Tech Mono" font-size="10">GND</text>
+        <circle cx="667" cy="132" r="4" fill="#cc2200"/>
+        <circle cx="667" cy="150" r="4" fill="#888"/>
+        <circle cx="667" cy="196" r="4" fill="#00a86b"/>
+        <circle cx="667" cy="214" r="4" fill="#888"/>
+
+        <!-- CUBE ORANGE -->
+        <rect x="770" y="100" width="200" height="180" rx="6" fill="#f5eeff" stroke="#5c2d91" stroke-width="1.5"/>
+        <text x="870" y="128" text-anchor="middle" fill="#5c2d91" font-family="Share Tech Mono" font-size="10" letter-spacing="1">CONTRÔLEUR DE VOL</text>
+        <text x="870" y="146" text-anchor="middle" fill="#3d1a6e" font-family="Barlow" font-size="13" font-weight="700">Cube Orange Plus</text>
+        <text x="870" y="162" text-anchor="middle" fill="#888" font-family="Share Tech Mono" font-size="9">ArduRover v4.6.3</text>
+        <text x="790" y="196" fill="#5c2d91" font-family="Share Tech Mono" font-size="10">RCIN</text>
+        <text x="835" y="188" fill="#888" font-family="Share Tech Mono" font-size="9">pin 1 · Signal</text>
+        <text x="835" y="204" fill="#888" font-family="Share Tech Mono" font-size="9">pin 2 · +5V</text>
+        <text x="835" y="220" fill="#888" font-family="Share Tech Mono" font-size="9">pin 3 · GND</text>
+        <circle cx="775" cy="184" r="4" fill="#00a86b"/>
+        <circle cx="775" cy="200" r="4" fill="#cc2200"/>
+        <circle cx="775" cy="216" r="4" fill="#888"/>
+        <text x="790" y="256" fill="#5c2d91" font-family="Share Tech Mono" font-size="10">MAIN OUT</text>
+        <text x="835" y="248" fill="#888" font-family="Share Tech Mono" font-size="9">1 · Gouvernail</text>
+        <text x="835" y="264" fill="#888" font-family="Share Tech Mono" font-size="9">2 · Voile</text>
+        <circle cx="775" cy="244" r="4" fill="#e05a00" opacity="0.7"/>
+        <circle cx="775" cy="260" r="4" fill="#e05a00" opacity="0.7"/>
+
+        <!-- === FILS === -->
+        <line x1="165" y1="151" x2="395" y2="264" stroke="#cc2200" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-red)"/>
+        <text x="270" y="228" fill="#cc2200" font-family="Share Tech Mono" font-size="9" transform="rotate(-25,270,228)">+5V alim</text>
+        <line x1="165" y1="171" x2="395" y2="244" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="395" y1="144" x2="473" y2="182" stroke="#0077cc" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="430" y="158" fill="#0077cc" font-family="Share Tech Mono" font-size="9">CH1→D3</text>
+        <line x1="395" y1="164" x2="473" y2="200" stroke="#0077cc" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="430" y="178" fill="#0077cc" font-family="Share Tech Mono" font-size="9">CH2→D4</text>
+        <line x1="395" y1="224" x2="473" y2="254" stroke="#d97700" stroke-width="2" marker-end="url(#arr-yel)"/>
+        <text x="430" y="242" fill="#d97700" font-family="Share Tech Mono" font-size="9">CH5→D7</text>
+        <line x1="395" y1="264" x2="667" y2="132" stroke="#cc2200" stroke-width="1.5" marker-end="url(#arr-red)"/>
+        <line x1="395" y1="244" x2="667" y2="150" stroke="#aaa" stroke-width="1.5"/>
+        <path d="M 473 132 L 440 110 L 667 110 L 667 132" fill="none" stroke="#5599cc" stroke-width="1.5" stroke-dasharray="3,3"/>
+        <text x="545" y="106" text-anchor="middle" fill="#5599cc" font-family="Share Tech Mono" font-size="9">RX0+TX1+D2 → +5V (pull-up)</text>
+        <path d="M 473 148 L 440 110" fill="none" stroke="#5599cc" stroke-width="1.5" stroke-dasharray="3,3"/>
+        <path d="M 473 164 L 440 110" fill="none" stroke="#5599cc" stroke-width="1.5" stroke-dasharray="3,3"/>
+        <line x1="667" y1="196" x2="775" y2="184" stroke="#00a86b" stroke-width="2.5" marker-end="url(#arr-grn)"/>
+        <text x="715" y="183" text-anchor="middle" fill="#00a86b" font-family="Share Tech Mono" font-size="10" font-weight="bold">PPM</text>
+        <line x1="667" y1="214" x2="775" y2="216" stroke="#aaa" stroke-width="1.5"/>
+        <path d="M 775 200 L 740 320 L 640 320 L 667 132" fill="none" stroke="#e05a00" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-org)"/>
+        <text x="700" y="316" text-anchor="middle" fill="#e05a00" font-family="Share Tech Mono" font-size="9">Cube +5V → alim Nano</text>
+
+        <!-- Légende -->
+        <rect x="20" y="290" width="380" height="36" rx="4" fill="#f0f6ff" stroke="#c8daea" stroke-width="1"/>
+        <line x1="32" y1="308" x2="58" y2="308" stroke="#0077cc" stroke-width="2"/>
+        <text x="64" y="312" fill="#0077cc" font-family="Share Tech Mono" font-size="9">Signal PWM</text>
+        <line x1="130" y1="308" x2="156" y2="308" stroke="#00a86b" stroke-width="2.5"/>
+        <text x="162" y="312" fill="#00a86b" font-family="Share Tech Mono" font-size="9">Signal PPM</text>
+        <line x1="228" y1="308" x2="254" y2="308" stroke="#cc2200" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="260" y="312" fill="#cc2200" font-family="Share Tech Mono" font-size="9">Alim +5V</text>
+        <line x1="316" y1="308" x2="342" y2="308" stroke="#5599cc" stroke-width="1.5" stroke-dasharray="3,3"/>
+        <text x="348" y="312" fill="#5599cc" font-family="Share Tech Mono" font-size="9">Pull-up</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- SCHEMA NANO DETAIL -->
+  <div class="section-title">02 · Détail Arduino Nano</div>
+  <div class="card">
+    <h2>Brochage Arduino Nano — Vue de dessus</h2>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 760 280" width="760" height="280" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- PCB Nano -->
+        <rect x="200" y="30" width="360" height="220" rx="8" fill="#eef5ff" stroke="#0066bb" stroke-width="2"/>
+        <text x="380" y="58" text-anchor="middle" fill="#0044aa" font-family="Share Tech Mono" font-size="12" letter-spacing="2">ARDUINO NANO</text>
+        <text x="380" y="74" text-anchor="middle" fill="#5599cc" font-family="Share Tech Mono" font-size="9">CH340 · ATmega328P · ArduPPM v2.3.16</text>
+
+        <!-- Chip au centre -->
+        <rect x="310" y="90" width="140" height="100" rx="4" fill="#ddeeff" stroke="#99bbdd" stroke-width="1"/>
+        <text x="380" y="134" text-anchor="middle" fill="#0055aa" font-family="Share Tech Mono" font-size="9">ATmega328P</text>
+        <text x="380" y="150" text-anchor="middle" fill="#88aacc" font-family="Share Tech Mono" font-size="8">16 MHz</text>
+
+        <!-- USB -->
+        <rect x="340" y="18" width="80" height="20" rx="3" fill="#e8f0f8" stroke="#99bbdd" stroke-width="1"/>
+        <text x="380" y="32" text-anchor="middle" fill="#888" font-family="Share Tech Mono" font-size="8">USB (flashage seul)</text>
+
+        <!-- === GAUCHE (broches D2 à D13 haut) === -->
+        <!-- Pin rows left -->
+        <!-- RX0 - pull-up -->
+        <rect x="188" y="88" width="16" height="10" rx="2" />
+        <text x="186" y="97" text-anchor="end" fill="#4fc3f7" font-family="Share Tech Mono" font-size="10">RX0</text>
+        <text x="60" y="97" text-anchor="start" fill="#4fc3f7" font-family="Share Tech Mono" font-size="9">→ +5V (pull-up)</text>
+        <line x1="204" y1="93" x2="150" y2="93" stroke="#4fc3f7" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <rect x="130" y="88" width="20" height="10" rx="2"  stroke="#4fc3f7" stroke-width="1"/>
+        <text x="140" y="97" text-anchor="middle" fill="#4fc3f7" font-family="Share Tech Mono" font-size="8">5V</text>
+
+        <!-- TX1 - pull-up -->
+        <rect x="188" y="104" width="16" height="10" rx="2" />
+        <text x="186" y="113" text-anchor="end" fill="#4fc3f7" font-family="Share Tech Mono" font-size="10">TX1</text>
+        <text x="60" y="113" text-anchor="start" fill="#4fc3f7" font-family="Share Tech Mono" font-size="9">→ +5V (pull-up)</text>
+        <line x1="204" y1="109" x2="150" y2="93" stroke="#4fc3f7" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+        <!-- D2 - pull-up -->
+        <rect x="188" y="120" width="16" height="10" rx="2" />
+        <text x="186" y="129" text-anchor="end" fill="#4fc3f7" font-family="Share Tech Mono" font-size="10">D2</text>
+        <text x="60" y="129" text-anchor="start" fill="#4fc3f7" font-family="Share Tech Mono" font-size="9">→ +5V (pull-up)</text>
+        <line x1="204" y1="125" x2="150" y2="93" stroke="#4fc3f7" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+        <!-- D3 - CH1 -->
+        <rect x="188" y="136" width="16" height="10" rx="2" fill="#cce8ff"/>
+        <text x="186" y="145" text-anchor="end" fill="#00d4ff" font-family="Share Tech Mono" font-size="10" font-weight="bold">D3</text>
+        <text x="60" y="145" text-anchor="start" fill="#00d4ff" font-family="Share Tech Mono" font-size="9">← CH1 Gouvernail</text>
+        <line x1="188" y1="141" x2="90" y2="141" stroke="#00d4ff" stroke-width="2" marker-end="url(#arr)"/>
+        <rect x="20" y="135" width="70" height="12" rx="2" fill="#001a22" stroke="#00d4ff" stroke-width="1"/>
+        <text x="55" y="145" text-anchor="middle" fill="#00d4ff" font-family="Share Tech Mono" font-size="9">RECEPT CH1</text>
+
+        <!-- D4 - CH2 -->
+        <rect x="188" y="152" width="16" height="10" rx="2" fill="#cce8ff"/>
+        <text x="186" y="161" text-anchor="end" fill="#00d4ff" font-family="Share Tech Mono" font-size="10" font-weight="bold">D4</text>
+        <text x="60" y="161" text-anchor="start" fill="#00d4ff" font-family="Share Tech Mono" font-size="9">← CH2 Voile</text>
+        <line x1="188" y1="157" x2="90" y2="157" stroke="#00d4ff" stroke-width="2" marker-end="url(#arr)"/>
+        <rect x="20" y="151" width="70" height="12" rx="2" fill="#001a22" stroke="#00d4ff" stroke-width="1"/>
+        <text x="55" y="161" text-anchor="middle" fill="#00d4ff" font-family="Share Tech Mono" font-size="9">RECEPT CH2</text>
+
+        <!-- D5 - non utilisé -->
+        <rect x="188" y="168" width="16" height="10" rx="2" fill="#111"/>
+        <text x="186" y="177" text-anchor="end" fill="#333" font-family="Share Tech Mono" font-size="10">D5</text>
+        <text x="60" y="177" text-anchor="start" fill="#333" font-family="Share Tech Mono" font-size="9">non connecté</text>
+
+        <!-- D6 - non utilisé -->
+        <rect x="188" y="184" width="16" height="10" rx="2" fill="#111"/>
+        <text x="186" y="193" text-anchor="end" fill="#333" font-family="Share Tech Mono" font-size="10">D6</text>
+        <text x="60" y="193" text-anchor="start" fill="#333" font-family="Share Tech Mono" font-size="9">non connecté</text>
+
+        <!-- D7 - CH5 -->
+        <rect x="188" y="200" width="16" height="10" rx="2" fill="#fff5cc"/>
+        <text x="186" y="209" text-anchor="end" fill="#ffd700" font-family="Share Tech Mono" font-size="10" font-weight="bold">D7</text>
+        <text x="60" y="209" text-anchor="start" fill="#ffd700" font-family="Share Tech Mono" font-size="9">← CH5 RC/Auto</text>
+        <line x1="188" y1="205" x2="90" y2="205" stroke="#ffd700" stroke-width="2" marker-end="url(#arr-yel)"/>
+        <rect x="20" y="199" width="70" height="12" rx="2" fill="#1a1500" stroke="#ffd700" stroke-width="1"/>
+        <text x="55" y="209" text-anchor="middle" fill="#ffd700" font-family="Share Tech Mono" font-size="9">RECEPT CH5</text>
+
+        <!-- === DROITE === -->
+        <!-- 5V input -->
+        <rect x="556" y="88" width="16" height="10" rx="2" fill="#ffe8e0"/>
+        <text x="574" y="97" fill="#ff6b35" font-family="Share Tech Mono" font-size="10">5V</text>
+        <text x="700" y="97" text-anchor="end" fill="#ff6b35" font-family="Share Tech Mono" font-size="9">← Cube RCIN pin2</text>
+        <line x1="572" y1="93" x2="660" y2="93" stroke="#ff6b35" stroke-width="2" stroke-dasharray="4,3"/>
+        <rect x="660" y="87" width="80" height="12" rx="2" fill="#1a0f00" stroke="#ff6b35" stroke-width="1"/>
+        <text x="700" y="97" text-anchor="middle" fill="#ff6b35" font-family="Share Tech Mono" font-size="9">CUBE +5V</text>
+
+        <!-- GND -->
+        <rect x="556" y="104" width="16" height="10" rx="2" fill="#f0f0f0"/>
+        <text x="574" y="113" fill="#888" font-family="Share Tech Mono" font-size="10">GND</text>
+        <text x="700" y="113" text-anchor="end" fill="#888" font-family="Share Tech Mono" font-size="9">← Cube RCIN pin3</text>
+        <line x1="572" y1="109" x2="660" y2="109" stroke="#555" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+        <!-- D10 - PPM OUT -->
+        <rect x="556" y="136" width="16" height="10" rx="2" fill="#ccf0e0"/>
+        <text x="574" y="145" fill="#00a86b" font-family="Share Tech Mono" font-size="10" font-weight="bold">D10</text>
+        <text x="574" y="155" fill="#555" font-family="Share Tech Mono" font-size="8">OC1B</text>
+        <line x1="572" y1="141" x2="660" y2="141" stroke="#00ff9d" stroke-width="2.5" marker-end="url(#arr-grn)"/>
+        <rect x="660" y="135" width="80" height="12" rx="2" fill="#eefff8" stroke="#00ff9d" stroke-width="1"/>
+        <text x="700" y="145" text-anchor="middle" fill="#00a86b" font-family="Share Tech Mono" font-size="9">CUBE RCIN S</text>
+        <text x="700" y="157" text-anchor="middle" fill="#00a86b" font-family="Share Tech Mono" font-size="8">← PPM SIGNAL</text>
+
+        <!-- GND out -->
+        <rect x="556" y="152" width="16" height="10" rx="2" fill="#f0f0f0"/>
+        <text x="574" y="161" fill="#888" font-family="Share Tech Mono" font-size="10">GND</text>
+        <line x1="572" y1="157" x2="660" y2="157" stroke="#aaa" stroke-width="1.5"/>
+
+      </svg>
+    </div>
+  </div>
+
+  <!-- TABLES -->
+  <div class="grid-2">
+
+    <!-- Récepteur → Nano -->
+    <div class="card">
+      <h2>📡 Récepteur → Arduino Nano</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>J5C01R</th>
+            <th>Nano</th>
+            <th>Rôle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-recept">CH1 Signal</span></td>
+            <td><span class="tag tag-nano">D3</span></td>
+            <td><span style="color:#0055bb">Gouvernail</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-recept">CH2 Signal</span></td>
+            <td><span class="tag tag-nano">D4</span></td>
+            <td><span style="color:#0055bb">Voile</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-recept">CH3 Signal</span></td>
+            <td><span class="tag tag-nano">D5</span></td>
+            <td><span style="color:#333">Non utilisé</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-recept">CH4 Signal</span></td>
+            <td><span class="tag tag-nano">D6</span></td>
+            <td><span style="color:#333">Non utilisé</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-recept">CH5 Signal</span></td>
+            <td><span class="tag tag-nano">D7</span></td>
+            <td><span style="color:#cc8800">Bascule RC/Auto</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-recept">+5V (milieu)</span></td>
+            <td><span class="tag tag-bec">5V pin</span></td>
+            <td><span style="color:#888">Alim. secondaire</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-recept">GND</span></td>
+            <td><span class="tag tag-nano">GND</span></td>
+            <td>Masse commune</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="warn-box">
+        <span class="warn-icon">⚠</span>
+        <div><strong>Pull-up obligatoire :</strong> Relier RX0 + TX1 + D2 au +5V du Nano. Sans cela, ces pins flottantes génèrent de fausses interruptions et les servos bougent de manière erratique.</div>
+      </div>
+    </div>
+
+    <!-- Nano → Cube -->
+    <div class="card">
+      <h2>🟣 Arduino Nano → Cube Orange</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nano</th>
+            <th>Cube RCIN</th>
+            <th>Rôle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-nano">D10 (OC1B)</span></td>
+            <td><span class="tag tag-cube">Pin 1 · Signal</span></td>
+            <td><span style="color:#007a4a;font-weight:700">Sortie PPM</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-nano">GND</span></td>
+            <td><span class="tag tag-cube">Pin 3 · GND</span></td>
+            <td>Masse commune</td>
+          </tr>
+          <tr>
+            <td><span style="color:#555">—</span></td>
+            <td><span class="tag tag-cube">Pin 2 · +5V</span></td>
+            <td><span style="color:#e05a00">→ Nano 5V</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-box">
+        💡 <strong>Alimentation principale du Nano :</strong> Le Nano est alimenté par le +5V propre du Cube Orange (RCIN pin 2) et non par le BEC servo, pour éviter les brownouts lors des mouvements de servos.
+      </div>
+      <div class="warn-box" style="margin-top:12px">
+        <span class="warn-icon">⚠</span>
+        <div><strong>Polarité RCIN :</strong> Sur le Cube Orange, le GND est sur la rangée du <strong>haut</strong> (inverse de la convention habituelle). Vérifier l'orientation du connecteur JST-GH 3 pins.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CONFIGURATION ARDUROVER -->
+  <div class="section-title">03 · Configuration ArduRover</div>
+  <div class="card">
+    <h2>Paramètres Mission Planner</h2>
+    <div class="grid-2" style="margin-bottom:0">
+
+      <div>
+        <div style="font-size:12px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;letter-spacing:2px;margin-bottom:12px">RCMAP — MAPPING CANAUX</div>
+        <div class="param-row">
+          <span class="param-key">RCMAP_ROLL</span>
+          <span class="param-val">= 4</span>
+          <span class="param-desc">Gouvernail ← CH1</span>
+        </div>
+        <div class="param-row">
+          <span class="param-key">RCMAP_THROTTLE</span>
+          <span class="param-val">= 5</span>
+          <span class="param-desc">Voile ← CH2</span>
+        </div>
+        <div class="param-row">
+          <span class="param-key">RCMAP_PITCH</span>
+          <span class="param-val">= 6</span>
+          <span class="param-desc">Non utilisé</span>
+        </div>
+        <div class="param-row">
+          <span class="param-key">MODE_CH</span>
+          <span class="param-val">= 6</span>
+          <span class="param-desc">Bascule RC/Auto ← CH5</span>
+        </div>
+        <div class="param-row">
+          <span class="param-key">SAIL_ENABLE</span>
+          <span class="param-val">= 1</span>
+          <span class="param-desc">Mode voilier activé</span>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:12px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;letter-spacing:2px;margin-bottom:12px">SERVO OUTPUT — SORTIES SERVO</div>
+        <div class="param-row">
+          <span class="param-key">MAIN OUT 1</span>
+          <span class="param-val">GroundSteering</span>
+          <span class="param-desc">Servo gouvernail</span>
+        </div>
+        <div class="param-row">
+          <span class="param-key">MAIN OUT 2</span>
+          <span class="param-val">SailMain</span>
+          <span class="param-desc">Servo voile</span>
+        </div>
+        <div class="param-row">
+          <span class="param-key">MAIN OUT 3+</span>
+          <span class="param-val">Disabled</span>
+          <span class="param-desc">Non utilisé</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;letter-spacing:2px;margin:16px 0 12px">FLIGHT MODES</div>
+        <div class="param-row">
+          <span class="param-key">Mode 1-3</span>
+          <span class="param-val">Guided</span>
+          <span class="param-desc">CH5 haut → Autonome</span>
+        </div>
+        <div class="param-row">
+          <span class="param-key">Mode 4-6</span>
+          <span class="param-val">Manual</span>
+          <span class="param-desc">CH5 bas → RC</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FIRMWARE -->
+  <div class="section-title">04 · Firmware ArduPPM</div>
+  <div class="card">
+    <h2>Flashage Arduino Nano — ArduPPM v2.3.16</h2>
+    <table>
+      <thead>
+        <tr><th>Paramètre</th><th>Valeur</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Fichier .hex</td><td><span class="tag tag-nano">ArduPPM_v2.3.16_ATMega328p_for_ArduPlane.hex</span></td></tr>
+        <tr><td>Source</td><td style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#5a7a9a">https://download.ardupilot.org/downloads/wiki/advanced_user_tools/</td></tr>
+        <tr><td>Outil de flashage</td><td><span class="tag tag-nano">avrdude 6.3.0</span> (inclus dans Arduino IDE 2.x)</td></tr>
+        <tr><td>Baud rate</td><td><span class="tag tag-nano">115200</span> (clone CH340)</td></tr>
+        <tr><td>Commande</td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#4fc3f7">avrdude -p atmega328p -c arduino -P COM15 -b 115200 -U flash:w:"fichier.hex":i</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box" style="margin-top:16px">
+      💡 <strong>Note CH340 :</strong> Les clones Nano avec chip CH340 utilisent le baud rate 115200 (et non 57600). Si l'upload échoue, vérifier le port COM dans le Gestionnaire de périphériques Windows.
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  BATTLEBOATS 2026 · Fort Saint-Louis, Toulon · 9-10 Mai 2026 · ArduPPM v2.3.16 · ArduRover v4.6.3
+</footer>
+
+</body>
+</html>

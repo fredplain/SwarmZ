@@ -240,7 +240,7 @@
   <div>
     <div class="logo">⚓ BATTLEBOATS 2026 · TOULON · MAI 2026</div>
     <h1>Câblage <span>PPM Encoder</span></h1>
-    <div class="subtitle">Arduino Nano CH340 · ArduPPM v2.3.16 · Joysway J5C01R → Cube Orange</div>
+    <div class="subtitle">Arduino Nano CH340 · ArduPPM v2.3.16 · Joysway J5C01R → Cube Orange Plus</div>
   </div>
 </header>
 
@@ -273,17 +273,6 @@
           </marker>
         </defs>
 
-        <!-- BEC -->
-        <rect x="20" y="120" width="140" height="100" rx="6" fill="#fff4ee" stroke="#e05a00" stroke-width="1.5"/>
-        <text x="90" y="148" text-anchor="middle" fill="#b84500" font-family="Share Tech Mono" font-size="11" letter-spacing="1">BEC</text>
-        <text x="90" y="166" text-anchor="middle" fill="#e05a00" font-family="Barlow" font-size="12" font-weight="700">5V DC</text>
-        <text x="90" y="184" text-anchor="middle" fill="#999" font-family="Share Tech Mono" font-size="10">LiFe 6.4V</text>
-        <text x="90" y="200" text-anchor="middle" fill="#999" font-family="Share Tech Mono" font-size="10">→ 5V stabilisé</text>
-        <rect x="155" y="148" width="10" height="6" rx="1" fill="#cc2200"/>
-        <text x="161" y="144" text-anchor="middle" fill="#cc2200" font-family="Share Tech Mono" font-size="9">+5V</text>
-        <rect x="155" y="168" width="10" height="6" rx="1" fill="#888"/>
-        <text x="161" y="164" text-anchor="middle" fill="#888" font-family="Share Tech Mono" font-size="9">GND</text>
-
         <!-- RECEPTEUR J5C01R -->
         <rect x="200" y="60" width="200" height="220" rx="6" fill="#edf8f2" stroke="#1a7a4a" stroke-width="1.5"/>
         <text x="300" y="88" text-anchor="middle" fill="#1a7a4a" font-family="Share Tech Mono" font-size="10" letter-spacing="1">RÉCEPTEUR</text>
@@ -304,10 +293,6 @@
         <circle cx="395" cy="184" r="4" fill="#ccc"/>
         <circle cx="395" cy="204" r="4" fill="#ccc"/>
         <circle cx="395" cy="224" r="4" fill="#d97700"/>
-        <circle cx="395" cy="264" r="4" fill="#cc2200"/>
-        <circle cx="395" cy="244" r="4" fill="#888"/>
-        <text x="388" y="264" text-anchor="end" fill="#cc2200" font-family="Share Tech Mono" font-size="9">+5V</text>
-        <text x="388" y="244" text-anchor="end" fill="#888" font-family="Share Tech Mono" font-size="9">GND</text>
 
         <!-- ARDUINO NANO -->
         <rect x="470" y="40" width="200" height="260" rx="6" fill="#eef5ff" stroke="#0066bb" stroke-width="1.5"/>
@@ -360,17 +345,12 @@
         <circle cx="775" cy="260" r="4" fill="#e05a00" opacity="0.7"/>
 
         <!-- === FILS === -->
-        <line x1="165" y1="151" x2="395" y2="264" stroke="#cc2200" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-red)"/>
-        <text x="270" y="228" fill="#cc2200" font-family="Share Tech Mono" font-size="9" transform="rotate(-25,270,228)">+5V alim</text>
-        <line x1="165" y1="171" x2="395" y2="244" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4,3"/>
         <line x1="395" y1="144" x2="473" y2="182" stroke="#0077cc" stroke-width="2" marker-end="url(#arr)"/>
         <text x="430" y="158" fill="#0077cc" font-family="Share Tech Mono" font-size="9">CH1→D3</text>
         <line x1="395" y1="164" x2="473" y2="200" stroke="#0077cc" stroke-width="2" marker-end="url(#arr)"/>
         <text x="430" y="178" fill="#0077cc" font-family="Share Tech Mono" font-size="9">CH2→D4</text>
         <line x1="395" y1="224" x2="473" y2="254" stroke="#d97700" stroke-width="2" marker-end="url(#arr-yel)"/>
         <text x="430" y="242" fill="#d97700" font-family="Share Tech Mono" font-size="9">CH5→D7</text>
-        <line x1="395" y1="264" x2="667" y2="132" stroke="#cc2200" stroke-width="1.5" marker-end="url(#arr-red)"/>
-        <line x1="395" y1="244" x2="667" y2="150" stroke="#aaa" stroke-width="1.5"/>
         <path d="M 473 132 L 440 110 L 667 110 L 667 132" fill="none" stroke="#5599cc" stroke-width="1.5" stroke-dasharray="3,3"/>
         <text x="545" y="106" text-anchor="middle" fill="#5599cc" font-family="Share Tech Mono" font-size="9">RX0+TX1+D2 → +5V (pull-up)</text>
         <path d="M 473 148 L 440 110" fill="none" stroke="#5599cc" stroke-width="1.5" stroke-dasharray="3,3"/>
@@ -544,11 +524,6 @@
             <td><span class="tag tag-recept">CH5 Signal</span></td>
             <td><span class="tag tag-nano">D7</span></td>
             <td><span style="color:#cc8800">Bascule RC/Auto</span></td>
-          </tr>
-          <tr>
-            <td><span class="tag tag-recept">+5V (milieu)</span></td>
-            <td><span class="tag tag-bec">5V pin</span></td>
-            <td><span style="color:#888">Alim. secondaire</span></td>
           </tr>
           <tr>
             <td><span class="tag tag-recept">GND</span></td>
